@@ -37,7 +37,9 @@ export default function PostsFeed({
           onLike={() => handleLike(post.stream_id)}
           onShare={() => handleShare(post.stream_id)}
           onCommentToggle={() => toggleComments(post.stream_id)}
-          onCommentTextChange={(text) => handleCommentTextChange(post.stream_id, text)}
+          onCommentTextChange={(text) =>
+            handleCommentTextChange(post.stream_id, text)
+          }
           onAddComment={(e) => handleAddComment(post.stream_id, e)}
         />
       ))}

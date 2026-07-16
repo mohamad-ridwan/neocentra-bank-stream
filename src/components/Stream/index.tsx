@@ -1,8 +1,8 @@
 import React from "react";
 import { CheckCircle } from "lucide-react";
 import { useStream } from "./hooks/useStream";
-import PostsFeed from "./PostsFeed";
-import TrendingSidebar from "./TrendingSidebar";
+import PostsFeed from "./post-feed";
+import TrendingSidebar from "./trending-topic";
 import QuickStats from "./QuickStats";
 
 export default function Stream() {
