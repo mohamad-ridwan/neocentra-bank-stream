@@ -1,3 +1,5 @@
+import { Pagination } from "./pagination.types";
+
 export interface ReactionDetails {
   reaction: string;
   side: string;
@@ -58,27 +60,23 @@ export interface ReplyPost {
   user: StreamUser;
 }
 
+export interface Conversation {
+  parent: StreamPost | null;
+  replies: ReplyPost[];
+}
+
 export interface StreamState {
   streams: {
     data: {
-      pagination: {
-        is_last_page: boolean;
-        total: number;
-      };
+      pagination: Pagination;
       stream: StreamPost[];
     };
     message: string;
   };
   conversations: {
     data: {
-      conversation: {
-        parent: StreamPost | null;
-        replies: ReplyPost[];
-      } | null;
-      pagination: {
-        is_last_page: boolean;
-        total: number;
-      };
+      conversation: Conversation | null;
+      pagination: Pagination;
     };
     message: string;
   };
