@@ -50,6 +50,9 @@ export default function PostCard({
           onCommentTextChange={onCommentTextChange}
           onAddComment={onAddComment}
           onClose={onCommentToggle}
+          hasLiked={hasLiked}
+          onLike={onLike}
+          onShare={onShare}
         />
       )}
     </div>

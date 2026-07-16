@@ -20,6 +20,9 @@ interface CommentsSectionProps {
   onCommentTextChange: (text: string) => void;
   onAddComment: (e: React.FormEvent) => void;
   onClose: () => void;
+  hasLiked: boolean;
+  onLike: () => void;
+  onShare: () => void;
 }
 
 export default function CommentsSection({
@@ -30,13 +33,16 @@ export default function CommentsSection({
   onCommentTextChange,
   onAddComment,
   onClose,
+  hasLiked,
+  onLike,
+  onShare,
 }: CommentsSectionProps) {
   // The dialog is open if this section's stream ID matches the active conversation's parent ID
   const isOpen = !!(activeConversation && activeConversation.parent?.stream_id === streamId);
 
   return (
     <RemoteDialog open={isOpen} onOpenChange={(open: boolean) => { if (!open) onClose(); }}>
-      <RemoteDialogContent className="max-w-4xl w-[95vw] md:w-full bg-slate-950 border border-slate-800 text-white p-0 overflow-hidden h-[85vh] max-h-[600px] flex flex-col md:flex-row rounded-2xl">
+      <RemoteDialogContent className="fixed inset-0 left-0 top-0 translate-x-0 translate-y-0 w-screen h-screen max-w-none max-h-none bg-transparent border-none shadow-none p-0 rounded-none flex flex-col md:flex-row">
         {isOpen && (
           <ConversationModalContent
             parent={activeConversation.parent}
@@ -45,6 +51,9 @@ export default function CommentsSection({
             onCommentTextChange={onCommentTextChange}
             onAddComment={onAddComment}
             onClose={onClose}
+            hasLiked={hasLiked}
+            onLike={onLike}
+            onShare={onShare}
           />
         )}
       </RemoteDialogContent>
