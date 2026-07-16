@@ -49,6 +49,7 @@ export default function PostCard({
           commentText={commentText}
           onCommentTextChange={onCommentTextChange}
           onAddComment={onAddComment}
+          onClose={onCommentToggle}
         />
       )}
     </div>

@@ -67,3 +67,17 @@ declare module "shared_remote/Skeleton" {
   export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {}
   export const Skeleton: React.ComponentType<SkeletonProps>;
 }
+
+declare module 'shared_remote/Dialog' {
+  import React from 'react';
+  export const Dialog: React.ComponentType<any>;
+  export const DialogTrigger: React.ComponentType<any>;
+  export const DialogContent: React.ComponentType<any>;
+  export const DialogHeader: React.ComponentType<any>;
+  export const DialogFooter: React.ComponentType<any>;
+  export const DialogTitle: React.ComponentType<any>;
+  export const DialogDescription: React.ComponentType<any>;
+  export const DialogClose: React.ComponentType<any>;
+  export const DialogPortal: React.ComponentType<any>;
+  export const DialogOverlay: React.ComponentType<any>;
+}
