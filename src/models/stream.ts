@@ -1,6 +1,6 @@
 import { StreamPost, MockConversation } from "@/types/stream.types";
 
-export const INITIAL_STREAM_POSTS: StreamPost[] = [
+const initialPosts: StreamPost[] = [
   {
     stream_id: 1,
     content_original:
@@ -71,6 +71,39 @@ export const INITIAL_STREAM_POSTS: StreamPost[] = [
     },
   },
 ];
+
+// Generate 97 more posts dynamically for a total of 100 data posts
+for (let i = 4; i <= 100; i++) {
+  initialPosts.push({
+    stream_id: i,
+    content_original: `This is a generated post #${i} to test scroll performance and react-window virtualization. Here is some random content to make each post length slightly different. ${
+      i % 2 === 0 ? "Adding some extra text for even-indexed posts." : ""
+    } ${
+      i % 3 === 0 ? "Also, adding even more text to make this post look longer and more realistic in a social feed." : ""
+    }`,
+    created_at: new Date(Date.now() - i * 3600000).toISOString(),
+    created_display: `${i} hours ago`,
+    reaction: {
+      my_reaction: null,
+      reactions: i % 5 === 0 ? [{ reaction: "👍", total: i % 7 }] : [],
+      total: i % 5 === 0 ? i % 7 : 0,
+    },
+    total_likes: i * 3,
+    total_replies: 0,
+    shares: i * 2,
+    user: {
+      avatar: "",
+      fullname: `Demo User ${i}`,
+      user_id: 1000 + i,
+      username: `demo_user_${i}`,
+      role: i % 2 === 0 ? "Bank Customer" : "Financial Advisor",
+      isVerified: i % 4 === 0,
+    },
+  });
+}
+
+export const INITIAL_STREAM_POSTS: StreamPost[] = initialPosts;
+
 
 export const INITIAL_MOCK_REPLIES: MockConversation[] = [
   {

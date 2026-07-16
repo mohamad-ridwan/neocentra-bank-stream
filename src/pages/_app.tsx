@@ -1,12 +1,12 @@
-import '@/styles/globals.css';
-import type { AppProps } from 'next/app';
-import React, { useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import { useRemoteCSS } from '@/hooks/useRemoteCSS';
-import { useStore } from 'react-redux';
-import { streamSlice } from '@/store/slices/streamSlice';
+import "@/styles/globals.css";
+import type { AppProps } from "next/app";
+import React, { useEffect } from "react";
+import dynamic from "next/dynamic";
+import { useRemoteCSS } from "@/hooks/useRemoteCSS";
+import { useStore } from "react-redux";
+import { streamSlice } from "@/store/slices/streamSlice";
 
-const MfeProviders = dynamic(() => import('@/components/MfeProviders'), {
+const MfeProviders = dynamic(() => import("@/components/MfeProviders"), {
   ssr: false,
 });
 
@@ -14,7 +14,7 @@ function StreamStoreInjector({ children }: { children: React.ReactNode }) {
   const store = useStore() as any;
   useEffect(() => {
     if (store && store.injectReducer) {
-      store.injectReducer('streams', streamSlice.reducer);
+      store.injectReducer("streams", streamSlice.reducer);
     }
   }, [store]);
 
@@ -23,12 +23,12 @@ function StreamStoreInjector({ children }: { children: React.ReactNode }) {
 
 export default function App({ Component, pageProps }: AppProps) {
   const SHARED_MFE_URL =
-    process.env.NEXT_PUBLIC_SHARED_URL || 'http://localhost:3342';
+    process.env.NEXT_PUBLIC_SHARED_URL || "http://localhost:3342";
 
   const { loaded, error } = useRemoteCSS(
     SHARED_MFE_URL,
-    'shared_remote',
-    './Button'
+    "shared_remote",
+    "./Button",
   );
 
   const showContent = loaded || error;

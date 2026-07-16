@@ -21,7 +21,7 @@ export default function Stream() {
   } = useStream();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans p-6">
+    <div className="bg-slate-950 text-slate-100 font-sans p-6">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-5 right-5 bg-teal-500 text-slate-950 px-4 py-3 rounded-xl shadow-2xl font-bold z-50 animate-bounce flex items-center gap-2">
