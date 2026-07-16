@@ -30,9 +30,9 @@ export default function Stream() {
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Feed Section (Col-span 2) */}
-        <div className="lg:col-span-2 space-y-6">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8">
+        {/* Main Feed Section (Left Side) */}
+        <div className="flex-1 min-w-0 space-y-6">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-teal-400 to-indigo-400 bg-clip-text text-transparent">
               NeoCentra Stream
@@ -57,8 +57,8 @@ export default function Stream() {
           />
         </div>
 
-        {/* Sidebar / Trending Section (Col-span 1) */}
-        <div className="space-y-6">
+        {/* Sidebar / Trending & Stream Stats (Right Side) */}
+        <div className="w-full md:w-80 lg:w-[350px] shrink-0 space-y-6">
           <TrendingSidebar />
           <QuickStats />
         </div>
