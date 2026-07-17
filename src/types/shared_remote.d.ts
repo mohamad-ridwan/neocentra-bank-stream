@@ -100,3 +100,9 @@ declare module 'shared_remote/Dialog' {
   export const DialogPortal: React.ComponentType<any>;
   export const DialogOverlay: React.ComponentType<any>;
 }
+
+declare module 'shared_remote/Toast' {
+  import React from 'react';
+  export const Toaster: React.ComponentType<any>;
+  export const toast: any;
+}

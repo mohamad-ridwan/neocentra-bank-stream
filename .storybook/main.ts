@@ -34,7 +34,13 @@ const config: StorybookConfig = {
         "shared_remote/useRemoteCSS": path.resolve(__dirname, "../../neocentra-bank-shared/src/hooks/useRemoteCSS.ts"),
         "shared_remote/federatedStats": path.resolve(__dirname, "../../neocentra-bank-shared/src/utils/federated-stats.ts"),
         "shared_remote/Skeleton": path.resolve(__dirname, "../../neocentra-bank-shared/src/components/ui/skeleton.tsx"),
+        "shared_remote/Toast": path.resolve(__dirname, "../../neocentra-bank-shared/src/components/ui/toast.tsx"),
+        "sonner": path.resolve(__dirname, "../node_modules/sonner"),
       };
+      config.resolve.modules = [
+        path.resolve(__dirname, "../node_modules"),
+        ...(config.resolve.modules || []),
+      ];
     }
 
     const sharedPath = path.resolve(__dirname, "../../neocentra-bank-shared");

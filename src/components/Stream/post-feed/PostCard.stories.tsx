@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import PostCard from './PostCard';
 import { StreamPost } from '@/types/stream.types';
+import MfeProviders from '../../MfeProviders';
 
 const meta: Meta<typeof PostCard> = {
   title: 'Stream/PostCard',
@@ -9,11 +10,13 @@ const meta: Meta<typeof PostCard> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div className="dark p-8 bg-slate-950 min-h-[450px] flex items-start justify-center rounded-xl text-slate-100">
-        <div className="w-full max-w-xl">
-          <Story />
+      <MfeProviders>
+        <div className="dark p-8 bg-slate-950 min-h-[450px] flex items-start justify-center rounded-xl text-slate-100">
+          <div className="w-full max-w-xl">
+            <Story />
+          </div>
         </div>
-      </div>
+      </MfeProviders>
     ),
   ],
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import { CheckCircle, MoreHorizontal } from "lucide-react";
 import { StreamPost } from "@/types/stream.types";
+import { useStream } from "../hooks/useStream";
 import dynamic from "next/dynamic";
 
 const Tooltip = dynamic(
@@ -35,9 +36,18 @@ const DropdownMenuItem = dynamic(
 
 interface PostHeaderProps {
   post: StreamPost;
+  demoLink?: string;
+  forceOpenTooltip?: boolean;
+  forceOpenMenu?: boolean;
 }
 
-export default function PostHeader({ post }: Readonly<PostHeaderProps>) {
+export default function PostHeader({
+  post,
+  demoLink,
+  forceOpenTooltip,
+  forceOpenMenu,
+}: Readonly<PostHeaderProps>) {
+  const { handleCopyLink } = useStream();
   return (
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-3">
@@ -50,7 +60,7 @@ export default function PostHeader({ post }: Readonly<PostHeaderProps>) {
               {post.user.fullname}
             </span>
             {post.user.isVerified && (
-              <Tooltip>
+              <Tooltip {...(forceOpenTooltip !== undefined ? { open: forceOpenTooltip } : {})}>
                 <TooltipTrigger asChild>
                   <span className="flex items-center">
                     <CheckCircle className="w-4 h-4 text-teal-400 fill-teal-400/20" />
@@ -75,7 +85,7 @@ export default function PostHeader({ post }: Readonly<PostHeaderProps>) {
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-slate-500">{post.created_display}</span>
-        <DropdownMenu>
+        <DropdownMenu {...(forceOpenMenu !== undefined ? { open: forceOpenMenu } : {})}>
           <DropdownMenuTrigger asChild>
             <button className="text-slate-500 hover:text-slate-300 focus:outline-none p-1 rounded-full hover:bg-slate-800/40 transition-colors">
               <MoreHorizontal className="w-5 h-5" />
@@ -98,7 +108,7 @@ export default function PostHeader({ post }: Readonly<PostHeaderProps>) {
               Follow this Post
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => console.log("Copy Link clicked")}
+              onClick={() => handleCopyLink(post.stream_id, demoLink)}
               className="text-slate-300 focus:text-white hover:bg-slate-800/60 focus:bg-slate-800/60 rounded-lg px-3 py-2 text-xs cursor-pointer transition-colors"
             >
               Copy Link

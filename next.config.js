@@ -32,6 +32,7 @@ module.exports = {
             "react-dom": { singleton: true, requiredVersion: false },
             "@reduxjs/toolkit": { singleton: true },
             "react-redux": { singleton: true },
+            sonner: { singleton: true, requiredVersion: false },
             "@tanstack/react-query": { singleton: true },
           },
         }),
@@ -82,6 +83,10 @@ module.exports = {
         "shared_remote/Dialog": path.resolve(
           __dirname,
           "../neocentra-bank-shared/src/components/ui/dialog.tsx",
+        ),
+        "shared_remote/Toast": path.resolve(
+          __dirname,
+          "../neocentra-bank-shared/src/components/ui/toast.tsx",
         ),
       };
     }
