@@ -63,6 +63,10 @@ module.exports = {
           __dirname,
           "../neocentra-bank-shared/src/components/ui/tooltip.tsx",
         ),
+        "shared_remote/DropdownMenu": path.resolve(
+          __dirname,
+          "../neocentra-bank-shared/src/components/ui/dropdown-menu.tsx",
+        ),
         "shared_remote/useRemoteCSS": path.resolve(
           __dirname,
           "../neocentra-bank-shared/src/hooks/useRemoteCSS.ts",
