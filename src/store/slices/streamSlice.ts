@@ -6,6 +6,7 @@ import {
   toggleLikeReducer,
   incrementShareReducer,
   addReplyReducer,
+  appendStreamsReducer,
 } from "../reducers/streamReducers";
 
 const initialState: StreamState = {
@@ -13,7 +14,7 @@ const initialState: StreamState = {
     data: {
       pagination: {
         is_last_page: false,
-        total: 1000,
+        total: 80,
       },
       stream: INITIAL_STREAM_POSTS,
     },
@@ -39,9 +40,10 @@ export const streamSlice = createSlice({
     toggleLike: toggleLikeReducer,
     incrementShare: incrementShareReducer,
     addReply: addReplyReducer,
+    appendStreams: appendStreamsReducer,
   },
 });
 
-export const { loadConversation, toggleLike, incrementShare, addReply } =
+export const { loadConversation, toggleLike, incrementShare, addReply, appendStreams } =
   streamSlice.actions;
 export default streamSlice.reducer;

@@ -3,6 +3,7 @@ import { List } from "react-window";
 import { usePostFeed } from "../hooks/usePostFeed";
 import { StreamPost } from "@/types/stream.types";
 import PostCard from "./PostCard";
+import PostSkeleton from "./loaders/PostSkeleton";
 
 interface PostsFeedProps {
   posts: StreamPost[];
@@ -46,7 +47,13 @@ const Row = React.memo(
     style: React.CSSProperties;
   } & RowProps) => {
     const post = posts[index];
-    if (!post) return null;
+    if (!post) {
+      return (
+        <div style={style} className="pb-3">
+          <PostSkeleton />
+        </div>
+      );
+    }
 
     return (
       <div style={style} className="pb-3">
@@ -81,8 +88,15 @@ export default function PostsFeed({
   handleCommentTextChange,
   handleAddComment,
 }: Readonly<PostsFeedProps>) {
-  const { viewportHeight, wrapperRef, listRef, rowHeight, wrapperHeight } =
-    usePostFeed({ posts });
+  const {
+    viewportHeight,
+    wrapperRef,
+    listRef,
+    rowHeight,
+    wrapperHeight,
+    onRowsRendered,
+    isLoading,
+  } = usePostFeed({ posts });
 
   return (
     <div
@@ -100,9 +114,10 @@ export default function PostsFeed({
       >
         <List
           listRef={listRef}
-          rowCount={posts.length}
+          rowCount={isLoading ? posts.length + 2 : posts.length}
           rowHeight={rowHeight}
           rowComponent={Row as any}
+          onRowsRendered={onRowsRendered}
           rowProps={{
             posts,
             activeConversation,

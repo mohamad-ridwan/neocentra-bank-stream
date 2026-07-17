@@ -1,5 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import { StreamState, ReplyPost } from "@/types/stream.types";
+import { StreamState, ReplyPost, StreamPost } from "@/types/stream.types";
 import { INITIAL_MOCK_REPLIES } from "@/models/stream";
 
 export const loadConversationReducer = (
@@ -153,5 +153,20 @@ export const addReplyReducer = (
   );
   if (post) {
     post.total_replies += 1;
+  }
+};
+
+export const appendStreamsReducer = (
+  state: StreamState,
+  action: PayloadAction<StreamPost[]>
+) => {
+  if (state.streams.data.pagination.is_last_page) return;
+
+  state.streams.data.stream.push(...action.payload);
+
+  state.streams.message = `${state.streams.data.stream.length} stream post(s) retrieved`;
+
+  if (state.streams.data.stream.length >= state.streams.data.pagination.total) {
+    state.streams.data.pagination.is_last_page = true;
   }
 };
