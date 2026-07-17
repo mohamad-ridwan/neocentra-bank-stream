@@ -39,6 +39,7 @@ interface PostHeaderProps {
   demoLink?: string;
   forceOpenTooltip?: boolean;
   forceOpenMenu?: boolean;
+  forceCopyLinkHover?: boolean;
 }
 
 export default function PostHeader({
@@ -46,6 +47,7 @@ export default function PostHeader({
   demoLink,
   forceOpenTooltip,
   forceOpenMenu,
+  forceCopyLinkHover,
 }: Readonly<PostHeaderProps>) {
   const { handleCopyLink } = useStream();
   return (
@@ -109,7 +111,9 @@ export default function PostHeader({
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => handleCopyLink(post.stream_id, demoLink)}
-              className="text-slate-300 focus:text-white hover:bg-slate-800/60 focus:bg-slate-800/60 rounded-lg px-3 py-2 text-xs cursor-pointer transition-colors"
+              className={`text-slate-300 focus:text-white hover:bg-slate-800/60 focus:bg-slate-800/60 rounded-lg px-3 py-2 text-xs cursor-pointer transition-colors ${
+                forceCopyLinkHover ? "bg-slate-800/60 text-white" : ""
+              }`}
             >
               Copy Link
             </DropdownMenuItem>

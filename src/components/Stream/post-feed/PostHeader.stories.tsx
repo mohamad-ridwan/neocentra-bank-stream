@@ -61,7 +61,7 @@ const mockUnverifiedPost: StreamPost = {
 export const VerifiedUser: Story = {
   args: {
     post: mockVerifiedPost,
-    forceOpenTooltip: false,
+    forceOpenTooltip: true,
   },
   argTypes: {
     forceOpenTooltip: {

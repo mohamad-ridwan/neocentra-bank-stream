@@ -8,6 +8,8 @@ interface PostActionBarProps {
   onLike: () => void;
   onCommentToggle: () => void;
   onShare: () => void;
+  forceHoverLike?: boolean;
+  forceHoverComment?: boolean;
 }
 
 export default function PostActionBar({
@@ -16,6 +18,8 @@ export default function PostActionBar({
   onLike,
   onCommentToggle,
   onShare,
+  forceHoverLike,
+  forceHoverComment,
 }: PostActionBarProps) {
   return (
     <div className="flex items-center justify-between border-t border-slate-800/60 pt-4 text-slate-400">
@@ -24,13 +28,13 @@ export default function PostActionBar({
         <button
           onClick={onLike}
           className={`flex items-center gap-2 text-xs font-semibold transition-colors duration-200 group ${
-            hasLiked ? "text-rose-500" : "hover:text-rose-500"
+            hasLiked || forceHoverLike ? "text-rose-500" : "hover:text-rose-500"
           }`}
         >
           <Heart
             className={`w-4 h-4 transition-transform duration-200 group-hover:scale-125 ${
               hasLiked ? "fill-rose-500 stroke-rose-500" : ""
-            }`}
+            } ${forceHoverLike && !hasLiked ? "scale-125 stroke-rose-500" : ""}`}
           />
           <span>{post.total_likes}</span>
         </button>
@@ -38,9 +42,15 @@ export default function PostActionBar({
         {/* Comment Toggle Button */}
         <button
           onClick={onCommentToggle}
-          className="flex items-center gap-2 text-xs font-semibold hover:text-teal-400 transition-colors duration-200 group"
+          className={`flex items-center gap-2 text-xs font-semibold transition-colors duration-200 group ${
+            forceHoverComment ? "text-teal-400" : "hover:text-teal-400"
+          }`}
         >
-          <MessageSquare className="w-4 h-4 transition-transform duration-200 group-hover:scale-125" />
+          <MessageSquare
+            className={`w-4 h-4 transition-transform duration-200 group-hover:scale-125 ${
+              forceHoverComment ? "scale-125" : ""
+            }`}
+          />
           <span>{post.total_replies}</span>
         </button>
 

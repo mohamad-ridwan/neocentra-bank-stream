@@ -15,6 +15,12 @@ interface PostCardProps {
   onCommentToggle: () => void;
   onCommentTextChange: (text: string) => void;
   onAddComment: (e: React.FormEvent) => void;
+  forceOpenTooltip?: boolean;
+  forceOpenMenu?: boolean;
+  forceHoverLike?: boolean;
+  forceHoverComment?: boolean;
+  forceCopyLinkHover?: boolean;
+  demoLink?: string;
 }
 
 export default function PostCard({
@@ -27,12 +33,24 @@ export default function PostCard({
   onCommentToggle,
   onCommentTextChange,
   onAddComment,
+  forceOpenTooltip,
+  forceOpenMenu,
+  forceHoverLike,
+  forceHoverComment,
+  forceCopyLinkHover,
+  demoLink,
 }: PostCardProps) {
   const hasLiked = !!post.reaction.my_reaction;
 
   return (
     <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 shadow-xl relative overflow-hidden transition-all duration-300 hover:border-slate-700/80">
-      <PostHeader post={post} />
+      <PostHeader
+        post={post}
+        forceOpenTooltip={forceOpenTooltip}
+        forceOpenMenu={forceOpenMenu}
+        forceCopyLinkHover={forceCopyLinkHover}
+        demoLink={demoLink}
+      />
       <PostContent content={post.content_original} />
       <PostActionBar
         post={post}
@@ -40,6 +58,8 @@ export default function PostCard({
         onLike={onLike}
         onCommentToggle={onCommentToggle}
         onShare={onShare}
+        forceHoverLike={forceHoverLike}
+        forceHoverComment={forceHoverComment}
       />
       {showComments && (
         <CommentsSection
