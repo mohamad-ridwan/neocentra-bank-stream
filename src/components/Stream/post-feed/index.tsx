@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
-import { List, useDynamicRowHeight } from "react-window";
+import React from "react";
+import { List } from "react-window";
+import { usePostFeed } from "../hooks/usePostFeed";
 import { StreamPost } from "@/types/stream.types";
 import PostCard from "./PostCard";
 
@@ -79,69 +80,9 @@ export default function PostsFeed({
   toggleComments,
   handleCommentTextChange,
   handleAddComment,
-}: PostsFeedProps) {
-  const [viewportHeight, setViewportHeight] = React.useState(800);
-  const [totalHeight, setTotalHeight] = React.useState<number | null>(null);
-  const wrapperRef = React.useRef<HTMLDivElement>(null);
-  const listRef = React.useRef<any>(null);
-
-  const rowHeight = useDynamicRowHeight({
-    defaultRowHeight: 150,
-  });
-
-  // Dynamically set viewport height and listen to window scroll to sync scrollTop
-  React.useEffect(() => {
-    const handleResize = () => {
-      setViewportHeight(window.innerHeight);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    const handleScroll = () => {
-      if (!wrapperRef.current || !listRef.current) return;
-
-      const listElement = listRef.current.element;
-      if (!listElement) return;
-
-      // Update total height if it changed
-      const currentScrollHeight = listElement.scrollHeight;
-      if (currentScrollHeight && currentScrollHeight !== totalHeight) {
-        setTotalHeight(currentScrollHeight);
-      }
-
-      const rect = wrapperRef.current.getBoundingClientRect();
-      // Calculate how much the wrapper has scrolled past the top of the viewport
-      const scrollTop = Math.max(0, -rect.top);
-      listElement.scrollTop = scrollTop;
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    // Initial sync
-    handleScroll();
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [totalHeight]);
-
-  // Keep total height synced even when not scrolling (as react-window measures items asynchronously)
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      if (listRef.current && listRef.current.element) {
-        const currentScrollHeight = listRef.current.element.scrollHeight;
-        if (currentScrollHeight && currentScrollHeight !== totalHeight) {
-          setTotalHeight(currentScrollHeight);
-        }
-      }
-    }, 200);
-    return () => clearInterval(interval);
-  }, [totalHeight, posts]);
-
-  const wrapperHeight = useMemo((): string | number => {
-    return totalHeight || "100vh";
-  }, [totalHeight]);
+}: Readonly<PostsFeedProps>) {
+  const { viewportHeight, wrapperRef, listRef, rowHeight, wrapperHeight } =
+    usePostFeed({ posts });
 
   return (
     <div

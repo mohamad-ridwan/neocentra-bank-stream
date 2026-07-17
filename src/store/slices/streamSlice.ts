@@ -13,7 +13,7 @@ const initialState: StreamState = {
     data: {
       pagination: {
         is_last_page: false,
-        total: 3,
+        total: 1000,
       },
       stream: INITIAL_STREAM_POSTS,
     },
