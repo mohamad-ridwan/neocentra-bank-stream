@@ -89,29 +89,36 @@ export default function Conversation({
 
           {replies.length > 0 ? (
             <div className="space-y-3">
-              {replies.map((reply) => (
-                <div
-                  key={reply.stream_id}
-                  className="bg-slate-900/30 border border-slate-800/40 hover:border-slate-800/80 rounded-2xl p-4 transition-all duration-200"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-slate-950 text-[10px] font-bold">
-                        {reply.user.fullname.charAt(0)}
-                      </div>
-                      <span className="font-bold text-teal-400 text-xs">
-                        {reply.user.fullname}
-                      </span>
+              {replies.map((reply) => {
+                const hasReplyLiked = !!reply.reaction.my_reaction;
+                return (
+                  <div
+                    key={reply.stream_id}
+                    className="bg-slate-900/30 border border-slate-800/40 hover:border-slate-800/80 rounded-2xl p-4 transition-all duration-200"
+                  >
+                    <PostHeader post={reply} size="xs" hideMenu={true} />
+                    <PostContent
+                      content={reply.content_original}
+                      size="xs"
+                      className="pl-8"
+                    />
+                    <div className="pl-8 mt-2">
+                      <PostActionBar
+                        post={reply}
+                        hasLiked={hasReplyLiked}
+                        onLike={() => {
+                          console.log("Like reply:", reply.stream_id);
+                        }}
+                        onCommentToggle={handleCommentClick}
+                        onShare={() => {
+                          console.log("Share reply:", reply.stream_id);
+                        }}
+                        size="xs"
+                      />
                     </div>
-                    <span className="text-[9px] text-slate-500">
-                      {reply.created_display}
-                    </span>
                   </div>
-                  <p className="text-slate-300 text-xs leading-relaxed pl-8 whitespace-pre-wrap break-words">
-                    {reply.content_original}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="text-slate-500 text-xs py-8 text-center bg-slate-900/10 border border-dashed border-slate-800/50 rounded-2xl">

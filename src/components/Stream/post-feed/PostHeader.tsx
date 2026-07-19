@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle, MoreHorizontal } from "lucide-react";
-import { StreamPost } from "@/types/stream.types";
+import { StreamPost, ReplyPost } from "@/types/stream.types";
 import { useStream } from "../hooks/useStream";
 import dynamic from "next/dynamic";
 
@@ -35,12 +35,12 @@ const DropdownMenuItem = dynamic(
 );
 
 interface PostHeaderProps {
-  post: StreamPost;
+  post: StreamPost | ReplyPost;
   demoLink?: string;
   forceOpenTooltip?: boolean;
   forceOpenMenu?: boolean;
   forceCopyLinkHover?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   hideMenu?: boolean;
 }
 
@@ -56,53 +56,67 @@ export default function PostHeader({
   const { handleCopyLink } = useStream();
 
   const avatarSize = {
+    xs: "w-6 h-6 text-[10px]",
     sm: "w-8 h-8 text-xs",
     md: "w-10 h-10 text-sm",
     lg: "w-12 h-12 text-base font-extrabold",
   }[size];
 
   const nameSize = {
+    xs: "text-xs",
     sm: "text-xs",
     md: "text-sm",
     lg: "text-base",
   }[size];
 
   const checkCircleSize = {
+    xs: "w-3 h-3",
     sm: "w-3.5 h-3.5",
     md: "w-4 h-4",
     lg: "w-5 h-5",
   }[size];
 
   const roleSize = {
+    xs: "text-[9px]",
     sm: "text-[10px]",
     md: "text-xs",
     lg: "text-xs",
   }[size];
 
   const dateSize = {
+    xs: "text-[9px]",
     sm: "text-[10px]",
     md: "text-xs",
     lg: "text-xs",
   }[size];
 
   const gapSize = {
+    xs: "gap-2",
     sm: "gap-2",
     md: "gap-3",
     lg: "gap-4",
   }[size];
 
+  const avatarGradient = size === "xs"
+    ? "from-indigo-500 to-purple-500"
+    : "from-teal-500 to-indigo-500";
+
+  const nameColor = size === "xs"
+    ? "text-teal-400 font-bold"
+    : "font-bold text-white hover:underline cursor-pointer";
+
   return (
-    <div className={`flex items-center justify-between ${size === "lg" ? "w-full" : "mb-4"}`}>
+    <div className={`flex items-center justify-between ${size === "lg" ? "w-full" : size === "xs" ? "mb-2" : "mb-4"}`}>
       <div className={`flex items-center ${gapSize}`}>
-        <div className={`rounded-full bg-gradient-to-br from-teal-500 to-indigo-500 flex items-center justify-center text-slate-950 font-bold shadow-md ${avatarSize}`}>
+        <div className={`rounded-full bg-gradient-to-br flex items-center justify-center text-slate-950 font-bold shadow-md ${avatarGradient} ${avatarSize}`}>
           {post.user.fullname.charAt(0)}
         </div>
         <div>
           <div className="flex items-center gap-1.5">
-            <span className={`font-bold text-white hover:underline cursor-pointer ${nameSize}`}>
+            <span className={`${nameColor} ${nameSize}`}>
               {post.user.fullname}
             </span>
-            {post.user.isVerified && (
+            {post.user.isVerified && size !== "xs" && (
               <Tooltip {...(forceOpenTooltip !== undefined ? { open: forceOpenTooltip } : {})}>
                 <TooltipTrigger asChild>
                   <span className="flex items-center">
@@ -121,9 +135,11 @@ export default function PostHeader({
               </Tooltip>
             )}
           </div>
-          <p className={`text-slate-400 ${roleSize}`}>
-            {post.user.role || "NeoCentra user"}
-          </p>
+          {size !== "xs" && (
+            <p className={`text-slate-400 ${roleSize}`}>
+              {post.user.role || "NeoCentra user"}
+            </p>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-2">
