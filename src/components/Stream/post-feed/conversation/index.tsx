@@ -28,11 +28,11 @@ export default function ConversationModalContent({
 }: Readonly<ConversationModalContentProps>) {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleCommentClick = () => {
+  const handleCommentClick = React.useCallback(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  };
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row h-full w-full bg-transparent text-slate-100 overflow-hidden">

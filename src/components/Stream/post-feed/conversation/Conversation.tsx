@@ -18,7 +18,7 @@ interface ConversationProps {
   inputRef?: React.RefObject<HTMLInputElement>;
 }
 
-export default function Conversation({
+const Conversation = React.memo(function Conversation({
   parent,
   replies,
   commentText,
@@ -79,4 +79,6 @@ export default function Conversation({
       />
     </div>
   );
-}
+});
+
+export default Conversation;

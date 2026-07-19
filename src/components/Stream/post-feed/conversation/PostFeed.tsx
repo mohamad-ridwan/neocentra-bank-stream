@@ -14,7 +14,7 @@ interface PostFeedProps {
   onCommentClick: () => void;
 }
 
-export default function PostFeed({
+const PostFeed = React.memo(function PostFeed({
   parent,
   onClose,
   hasLiked,
@@ -68,4 +68,6 @@ export default function PostFeed({
       )}
     </div>
   );
-}
+});
+
+export default PostFeed;
