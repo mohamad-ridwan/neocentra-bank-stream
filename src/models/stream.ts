@@ -1,4 +1,4 @@
-import { StreamPost, MockConversation } from "@/types/stream.types";
+import { StreamPost, MockConversation, ReplyPost } from "@/types/stream.types";
 
 const initialPosts: StreamPost[] = [
   {
@@ -72,7 +72,10 @@ const initialPosts: StreamPost[] = [
   },
 ];
 
-export function generateMockPosts(startId: number, count: number): StreamPost[] {
+export function generateMockPosts(
+  startId: number,
+  count: number,
+): StreamPost[] {
   const posts: StreamPost[] = [];
   for (let i = startId; i < startId + count; i++) {
     posts.push({
@@ -107,12 +110,66 @@ export function generateMockPosts(startId: number, count: number): StreamPost[] 
   return posts;
 }
 
+export function generateMockReplies(
+  parentStreamId: number,
+  startId: number,
+  count: number,
+  contentTemplate?: string | ((index: number) => string),
+  userPrefix?: string,
+): ReplyPost[] {
+  const replies: ReplyPost[] = [];
+  for (let i = 0; i < count; i++) {
+    const currentId = startId + i;
+    const fullname = `${userPrefix || "Mock Reply User"} ${currentId}`;
+    const username = `${(userPrefix || "mock_reply_user").toLowerCase().replace(/\s+/g, "_")}_${currentId}`;
+    const content =
+      typeof contentTemplate === "function"
+        ? contentTemplate(i)
+        : contentTemplate
+          ? `${contentTemplate} #${currentId}`
+          : `This is a generated reply #${currentId} for stream ${parentStreamId}. Feeling excited to try this out!`;
+
+    replies.push({
+      parent_stream_id: parentStreamId,
+      stream_id: currentId,
+      reply_to: parentStreamId,
+      reply_content: {
+        avatar: "",
+        content_original: content,
+        created: `${i + 1} hours ago`,
+        fullname,
+        user_id: 2000 + currentId,
+        username,
+      },
+      content_original: content,
+      created_at: new Date(Date.now() - (i + 1) * 3600000).toISOString(),
+      created_display: `${i + 1} hours ago`,
+      reaction: {
+        my_reaction: null,
+        reactions: i % 3 === 0 ? [{ reaction: "👍", total: (i % 4) + 1 }] : [],
+        total: i % 3 === 0 ? (i % 4) + 1 : 0,
+      },
+      total_likes: i * 2,
+      total_replies: 0,
+      user: {
+        avatar: "",
+        fullname,
+        user_id: 2000 + currentId,
+        username,
+        role: i % 2 === 0 ? "Bank Customer" : "Financial Advisor",
+        isVerified: i % 3 === 0,
+      },
+    });
+  }
+  return replies;
+}
+
 // Generate more posts dynamically initially for a total of 20 data posts
 initialPosts.push(...generateMockPosts(4, 17));
 
 export const INITIAL_STREAM_POSTS: StreamPost[] = initialPosts;
 
-export const INITIAL_MOCK_REPLIES: MockConversation[] = [
+const initialMockReplies: MockConversation[] = [
   {
     stream_id: 1,
     replies: [
@@ -253,3 +310,26 @@ export const INITIAL_MOCK_REPLIES: MockConversation[] = [
     ],
   },
 ];
+
+// Generate more replies dynamically initially for stream_id: 1
+const generatedReplies = generateMockReplies(
+  1,
+  1003,
+  500,
+  (index) =>
+    `Generated dynamic reply #${index + 1} with custom message. Feeling extremely satisfied with the speed and reliability.`,
+  "Dynamic User",
+);
+
+const stream1Conversation = initialMockReplies.find((c) => c.stream_id === 1);
+if (stream1Conversation) {
+  stream1Conversation.replies.push(...generatedReplies);
+}
+
+// Also update the total_replies count in initialPosts for stream_id 1
+const parentPost = initialPosts.find((p) => p.stream_id === 1);
+if (parentPost) {
+  parentPost.total_replies += generatedReplies.length;
+}
+
+export const INITIAL_MOCK_REPLIES: MockConversation[] = initialMockReplies;
