@@ -33,3 +33,10 @@ export const selectActiveParentStream = createSelector(
   [selectActiveConversation],
   (conversation) => conversation?.parent
 );
+
+// Select conversation pagination state
+export const selectConversationPagination = createSelector(
+  [selectStreamState],
+  (streamState) => streamState?.conversations?.data?.pagination
+);
+

@@ -14,14 +14,57 @@ export const loadConversationReducer = (
   );
   const replies = conversationRecord ? conversationRecord.replies : [];
 
+  // Slice initial replies for demo: take last 10 replies
+  const initialCount = Math.min(10, replies.length);
+  const slicedReplies = replies.slice(-initialCount);
+
   state.conversations.data.conversation = {
     parent: parentPost,
-    replies: replies,
+    replies: slicedReplies,
   };
-  state.conversations.data.pagination.total = replies.length;
+
+  // If total replies > 10, set total to 50 for the pagination demo, else use actual replies length
+  const hasMore = replies.length > 10;
+  state.conversations.data.pagination.total = hasMore ? 50 : replies.length;
+  state.conversations.data.pagination.is_last_page = hasMore;
   state.conversations.message =
     "Conversation stream posts retrieved successfully";
 };
+
+export const prependConversationRepliesReducer = (
+  state: StreamState,
+  action: PayloadAction<{
+    replies: ReplyPost[];
+  }>
+) => {
+  const { replies } = action.payload;
+  const activeConv = state.conversations.data.conversation;
+  if (activeConv) {
+    // Prepend the new replies
+    activeConv.replies = [...replies, ...activeConv.replies];
+
+    // Increment total replies count in parent post
+    if (activeConv.parent) {
+      activeConv.parent.total_replies += replies.length;
+
+      // Update total replies in feed stream list
+      const post = state.streams.data.stream.find(
+        (p) => p.stream_id === activeConv.parent!.stream_id
+      );
+      if (post) {
+        post.total_replies += replies.length;
+      }
+    }
+
+    // Check if we have reached or exceeded the total limit
+    const currentCount = activeConv.replies.length;
+    const total = state.conversations.data.pagination.total;
+    if (currentCount >= total) {
+      state.conversations.data.pagination.is_last_page = false;
+    }
+  }
+};
+
 
 export const toggleLikeReducer = (
   state: StreamState,

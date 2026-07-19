@@ -7,6 +7,7 @@ import {
   incrementShareReducer,
   addReplyReducer,
   appendStreamsReducer,
+  prependConversationRepliesReducer,
 } from "../reducers/streamReducers";
 
 const initialState: StreamState = {
@@ -41,9 +42,17 @@ export const streamSlice = createSlice({
     incrementShare: incrementShareReducer,
     addReply: addReplyReducer,
     appendStreams: appendStreamsReducer,
+    prependConversationReplies: prependConversationRepliesReducer,
   },
 });
 
-export const { loadConversation, toggleLike, incrementShare, addReply, appendStreams } =
-  streamSlice.actions;
+export const {
+  loadConversation,
+  toggleLike,
+  incrementShare,
+  addReply,
+  appendStreams,
+  prependConversationReplies,
+} = streamSlice.actions;
 export default streamSlice.reducer;
+
