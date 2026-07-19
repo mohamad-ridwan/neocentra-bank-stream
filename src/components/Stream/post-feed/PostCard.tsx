@@ -39,7 +39,7 @@ export default function PostCard({
   forceHoverComment,
   forceCopyLinkHover,
   demoLink,
-}: PostCardProps) {
+}: Readonly<PostCardProps>) {
   const hasLiked = !!post.reaction.my_reaction;
 
   return (
