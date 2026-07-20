@@ -73,7 +73,11 @@ export function useConversationReplies({
   // Sync scroll height and list scrollTop on container scroll events.
   useEffect(() => {
     const handleResize = () => {
-      setViewportHeight(window.innerHeight);
+      if (scrollContainerRef.current) {
+        setViewportHeight(scrollContainerRef.current.clientHeight);
+      } else {
+        setViewportHeight(window.innerHeight);
+      }
       setIsMobile(window.innerWidth < 768);
     };
     handleResize();

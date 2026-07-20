@@ -21,7 +21,7 @@ export const CommentInput = React.memo(function CommentInput({
   inputRef,
 }: Readonly<CommentInputProps>) {
   return (
-    <div className="absolute bottom-0 left-0 right-0 p-4 bg-slate-950 border-t border-slate-800/80">
+    <div className="p-4 bg-slate-950 border-t border-slate-800/80 w-full relative z-10">
       <form onSubmit={onAddComment} className="flex items-center gap-2">
         <input
           ref={inputRef}

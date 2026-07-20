@@ -62,7 +62,7 @@ const Conversation = React.memo(function Conversation({
       {/* Scrollable conversation wrapper */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto px-6 pb-20 space-y-6 custom-scrollbar relative"
+        className="flex-1 overflow-y-auto px-6 space-y-6 custom-scrollbar relative"
         style={{ overflowAnchor: "none" }}
       >
         {/* List replies (incorporating parent post virtualized) */}
