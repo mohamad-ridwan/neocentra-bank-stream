@@ -7,6 +7,7 @@ import PostContent from "../../PostContent";
 import PostActionBar from "../../PostActionBar";
 import { useConversationReplies } from "../hooks/useConversationReplies";
 import { ParentPost } from "./ParentPost";
+import PostSkeleton from "@/components/Stream/post-feed/loaders/PostSkeleton";
 
 interface ReplyItemProps {
   reply: ReplyPost;
@@ -74,7 +75,7 @@ const Row = React.memo(function Row({
   if (parent) {
     if (index === 0) {
       return (
-        <div style={style} className="pb-6 pr-2">
+        <div style={style} className="pt-6 pb-6 pr-2">
           <ParentPost
             parent={parent}
             hasLiked={parentHasLiked}
@@ -88,7 +89,7 @@ const Row = React.memo(function Row({
 
     if (index === 1) {
       return (
-        <div style={style} className="pt-4 pb-2 pr-2">
+        <div style={style} className="pt-6 pb-2 pr-2">
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1">
             Replies ({replies.length})
           </h4>
@@ -240,6 +241,7 @@ export const ConversationReplies = React.memo(function ConversationReplies({
     wrapperHeight,
     isLoading,
     loadMore,
+    isReady,
   } = useConversationReplies({
     parent,
     replies,
@@ -287,33 +289,55 @@ export const ConversationReplies = React.memo(function ConversationReplies({
           overflow: "hidden",
         }}
       >
-        <List
-          listRef={listRef}
-          rowCount={rowCount}
-          rowHeight={rowHeight}
-          rowComponent={Row as any}
-          rowProps={{
-            parent,
-            parentHasLiked: hasLiked,
-            onParentLike: onLike,
-            onParentShare: onShare,
-            replies,
-            isLoading,
-            onCommentToggle,
-            showLoadMore,
-            onLoadMore: loadMore,
-          }}
-          className="scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
-          style={{
-            height: "100%",
-            width: "100%",
-            overflow: "hidden",
-            overflowAnchor: "none",
-          }}
-          overscanCount={5}
-        />
+        {!isReady && (
+          <div className="absolute inset-0 bg-slate-950 z-30 overflow-y-auto pt-16 pr-2 space-y-6 scrollbar-none">
+            {parent && (
+              <div className="pb-6 border-b border-slate-800/40">
+                <PostSkeleton size="md" />
+              </div>
+            )}
+            <div className="pt-2">
+              <div className="h-4 bg-slate-800/40 rounded-md w-28 mb-4 animate-pulse" />
+              <div className="space-y-4">
+                <PostSkeleton size="xs" />
+                <PostSkeleton size="xs" />
+                <PostSkeleton size="xs" />
+              </div>
+            </div>
+          </div>
+        )}
+        <div
+          className={`w-full h-full transition-opacity duration-300 ${
+            isReady ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <List
+            listRef={listRef}
+            rowCount={rowCount}
+            rowHeight={rowHeight}
+            rowComponent={Row as any}
+            rowProps={{
+              parent,
+              parentHasLiked: hasLiked,
+              onParentLike: onLike,
+              onParentShare: onShare,
+              replies,
+              isLoading,
+              onCommentToggle,
+              showLoadMore,
+              onLoadMore: loadMore,
+            }}
+            className="scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
+            style={{
+              height: "100%",
+              width: "100%",
+              overflow: "hidden",
+              overflowAnchor: "none",
+            }}
+            overscanCount={5}
+          />
+        </div>
       </div>
     </div>
   );
 });
-

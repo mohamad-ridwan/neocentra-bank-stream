@@ -27,8 +27,9 @@ export function useConversationReplies({
   scrollContainerRef,
 }: UseConversationRepliesProps) {
   const dispatch = useDispatch();
-  const hasAutoScrolledRef = useRef(false);
+  const [hasAutoScrolled, setHasAutoScrolled] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(false);
   const [viewportHeight, setViewportHeight] = useState(800);
   const [totalHeight, setTotalHeight] = useState<number | null>(null);
   const totalHeightRef = useRef<number | null>(null);
@@ -73,6 +74,7 @@ export function useConversationReplies({
   useEffect(() => {
     const handleResize = () => {
       setViewportHeight(window.innerHeight);
+      setIsMobile(window.innerWidth < 768);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -142,34 +144,48 @@ export function useConversationReplies({
     return totalHeight || "100vh";
   }, [totalHeight]);
 
-  // Reset refs when parentStreamId changes
+  // Reset refs/state when parentStreamId changes
   useEffect(() => {
-    hasAutoScrolledRef.current = false;
+    setHasAutoScrolled(false);
   }, [parentStreamId]);
 
   // Handle auto-scroll to latest messages (bottom) on first load
   useEffect(() => {
+    if (isMobile) return;
+
     if (
       parentStreamId &&
       replies.length > 0 &&
-      !hasAutoScrolledRef.current &&
+      !hasAutoScrolled &&
       totalHeight &&
       totalHeight > 100
     ) {
       const scrollContainer = scrollContainerRef.current;
       if (scrollContainer) {
-        hasAutoScrolledRef.current = true;
         scrollContainer.scrollTop = scrollContainer.scrollHeight;
 
         const timer = setTimeout(() => {
+          setHasAutoScrolled(true);
           if (scrollContainer) {
             scrollContainer.scrollTop = scrollContainer.scrollHeight;
           }
-        }, 50);
+        }, 500); // Wait for dynamic measurements to stabilize
+
         return () => clearTimeout(timer);
       }
     }
-  }, [parentStreamId, replies.length, totalHeight, scrollContainerRef]);
+  }, [
+    parentStreamId,
+    replies.length,
+    totalHeight,
+    scrollContainerRef,
+    hasAutoScrolled,
+    isMobile,
+  ]);
+
+  const isReady = useMemo(() => {
+    return replies.length === 0 || isMobile || hasAutoScrolled;
+  }, [replies.length, isMobile, hasAutoScrolled]);
 
   return {
     viewportHeight,
@@ -179,6 +195,6 @@ export function useConversationReplies({
     wrapperHeight,
     isLoading,
     loadMore,
+    isReady,
   };
 }
-
