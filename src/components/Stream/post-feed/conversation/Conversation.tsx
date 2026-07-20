@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { StreamPost, ReplyPost } from "@/types/stream.types";
 import { X } from "lucide-react";
 import { selectConversationPagination } from "@/store/selectors/streamSelectors";
-import { ParentPost } from "./components/ParentPost";
 import { ConversationReplies } from "./components/ConversationReplies";
 import { CommentInput } from "./components/CommentInput";
 
@@ -66,17 +65,12 @@ const Conversation = React.memo(function Conversation({
         className="flex-1 overflow-y-auto p-6 pt-16 pb-24 space-y-6 custom-scrollbar relative"
         style={{ overflowAnchor: "none" }}
       >
-        {/* Top content: parent post detail */}
-        <ParentPost
+        {/* List replies (incorporating parent post virtualized) */}
+        <ConversationReplies
           parent={parent}
           hasLiked={hasLiked}
           onLike={onLike}
           onShare={onShare}
-          onCommentClick={handleCommentClick}
-        />
-
-        {/* List replies */}
-        <ConversationReplies
           parentStreamId={parentStreamId}
           replies={replies}
           onCommentToggle={handleCommentClick}
