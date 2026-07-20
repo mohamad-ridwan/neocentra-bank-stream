@@ -289,23 +289,24 @@ export const ConversationReplies = React.memo(function ConversationReplies({
           overflow: "hidden",
         }}
       >
-        {!isReady && (
-          <div className="absolute inset-0 bg-slate-950 z-30 pt-16 pr-2 space-y-6">
-            {parent && (
-              <div className="pb-6 border-b border-slate-800/40">
-                <PostSkeleton size="md" />
-              </div>
-            )}
-            <div className="pt-2">
-              <div className="h-4 bg-slate-800/40 rounded-md w-28 mb-4 animate-pulse" />
-              <div className="space-y-4">
-                {/* <PostSkeleton size="xs" /> */}
-                <PostSkeleton size="xs" />
-                <PostSkeleton size="xs" />
-              </div>
+        <div
+          className={`absolute inset-0 bg-slate-950 z-30 pt-16 pr-2 space-y-6 transition-opacity duration-300 ${
+            isReady ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
+        >
+          {parent && (
+            <div className="pb-6 border-b border-slate-800/40">
+              <PostSkeleton size="md" />
+            </div>
+          )}
+          <div className="pt-2">
+            <div className="h-4 bg-slate-800/40 rounded-md w-28 mb-4 animate-pulse" />
+            <div className="space-y-4">
+              <PostSkeleton size="xs" />
+              <PostSkeleton size="xs" />
             </div>
           </div>
-        )}
+        </div>
         <div
           className={`w-full h-full transition-opacity duration-300 ${
             isReady ? "opacity-100" : "opacity-0 pointer-events-none"

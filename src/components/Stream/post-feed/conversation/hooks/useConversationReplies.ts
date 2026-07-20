@@ -166,16 +166,33 @@ export function useConversationReplies({
     ) {
       const scrollContainer = scrollContainerRef.current;
       if (scrollContainer) {
-        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        let frameId: number;
+        let lastHeight = scrollContainer.scrollHeight;
+        let consecutiveMatches = 0;
 
-        const timer = setTimeout(() => {
-          setHasAutoScrolled(true);
-          if (scrollContainer) {
-            scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        const checkAndScroll = () => {
+          const container = scrollContainerRef.current;
+          if (!container) return;
+
+          const currentHeight = container.scrollHeight;
+          container.scrollTop = currentHeight;
+
+          if (currentHeight === lastHeight) {
+            consecutiveMatches++;
+            if (consecutiveMatches >= 15) {
+              setHasAutoScrolled(true);
+              return;
+            }
+          } else {
+            consecutiveMatches = 0;
+            lastHeight = currentHeight;
           }
-        }, 500); // Wait for dynamic measurements to stabilize
 
-        return () => clearTimeout(timer);
+          frameId = requestAnimationFrame(checkAndScroll);
+        };
+
+        frameId = requestAnimationFrame(checkAndScroll);
+        return () => cancelAnimationFrame(frameId);
       }
     }
   }, [
