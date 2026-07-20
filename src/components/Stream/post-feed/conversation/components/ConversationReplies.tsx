@@ -58,8 +58,6 @@ const Row = React.memo(function Row({
   isLoading,
   onCommentToggle,
 }: Readonly<RowProps>) {
-
-
   // Skeletons are placed at index 0 and 1 when loading older replies
   if (isLoading) {
     if (index === 0 || index === 1) {
@@ -154,7 +152,12 @@ export const ConversationReplies = React.memo(function ConversationReplies({
                 onCommentToggle,
               }}
               className="scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
-              style={{ height: "100%", width: "100%", overflow: "hidden" }}
+              style={{
+                height: "100%",
+                width: "100%",
+                overflow: "hidden",
+                overflowAnchor: "none",
+              }}
               overscanCount={5}
             />
           </div>

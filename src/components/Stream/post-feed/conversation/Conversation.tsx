@@ -63,7 +63,8 @@ const Conversation = React.memo(function Conversation({
       {/* Scrollable conversation wrapper */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto p-6 pt-16 pb-24 space-y-6 custom-scrollbar"
+        className="flex-1 overflow-y-auto p-6 pt-16 pb-24 space-y-6 custom-scrollbar relative"
+        style={{ overflowAnchor: "none" }}
       >
         {/* Top content: parent post detail */}
         <ParentPost
@@ -96,4 +97,3 @@ const Conversation = React.memo(function Conversation({
 });
 
 export default Conversation;
-

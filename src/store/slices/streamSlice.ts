@@ -26,7 +26,7 @@ const initialState: StreamState = {
       conversation: null,
       pagination: {
         is_last_page: true,
-        total: 0,
+        total: 100,
       },
     },
     message: "",
@@ -55,4 +55,3 @@ export const {
   prependConversationReplies,
 } = streamSlice.actions;
 export default streamSlice.reducer;
-

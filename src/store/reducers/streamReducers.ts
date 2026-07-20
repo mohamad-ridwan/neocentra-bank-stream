@@ -4,18 +4,18 @@ import { INITIAL_MOCK_REPLIES } from "@/models/stream";
 
 export const loadConversationReducer = (
   state: StreamState,
-  action: PayloadAction<number>
+  action: PayloadAction<number>,
 ) => {
   const streamId = action.payload;
   const parentPost =
     state.streams.data.stream.find((p) => p.stream_id === streamId) || null;
   const conversationRecord = INITIAL_MOCK_REPLIES.find(
-    (r) => r.stream_id === streamId
+    (r) => r.stream_id === streamId,
   );
   const replies = conversationRecord ? conversationRecord.replies : [];
 
   // Slice initial replies for demo: take last 10 replies
-  const initialCount = Math.min(10, replies.length);
+  const initialCount = Math.min(20, replies.length);
   const slicedReplies = replies.slice(-initialCount);
 
   state.conversations.data.conversation = {
@@ -23,9 +23,9 @@ export const loadConversationReducer = (
     replies: slicedReplies,
   };
 
-  // If total replies > 10, set total to 50 for the pagination demo, else use actual replies length
-  const hasMore = replies.length > 10;
-  state.conversations.data.pagination.total = hasMore ? 50 : replies.length;
+  // If total replies > 10, set total to 100 for the pagination demo, else use actual replies length
+  const hasMore = replies.length > 20;
+  state.conversations.data.pagination.total = hasMore ? 200 : replies.length;
   state.conversations.data.pagination.is_last_page = hasMore;
   state.conversations.message =
     "Conversation stream posts retrieved successfully";
@@ -35,7 +35,7 @@ export const prependConversationRepliesReducer = (
   state: StreamState,
   action: PayloadAction<{
     replies: ReplyPost[];
-  }>
+  }>,
 ) => {
   const { replies } = action.payload;
   const activeConv = state.conversations.data.conversation;
@@ -49,7 +49,7 @@ export const prependConversationRepliesReducer = (
 
       // Update total replies in feed stream list
       const post = state.streams.data.stream.find(
-        (p) => p.stream_id === activeConv.parent!.stream_id
+        (p) => p.stream_id === activeConv.parent!.stream_id,
       );
       if (post) {
         post.total_replies += replies.length;
@@ -65,17 +65,14 @@ export const prependConversationRepliesReducer = (
   }
 };
 
-
 export const toggleLikeReducer = (
   state: StreamState,
-  action: PayloadAction<number>
+  action: PayloadAction<number>,
 ) => {
   const streamId = action.payload;
 
   // Update in stream list
-  const post = state.streams.data.stream.find(
-    (p) => p.stream_id === streamId
-  );
+  const post = state.streams.data.stream.find((p) => p.stream_id === streamId);
   if (post) {
     const isLiked = !!post.reaction.my_reaction;
     if (isLiked) {
@@ -102,7 +99,7 @@ export const toggleLikeReducer = (
       activeConv.parent.reaction.my_reaction = null;
       activeConv.parent.total_likes = Math.max(
         0,
-        activeConv.parent.total_likes - 1
+        activeConv.parent.total_likes - 1,
       );
     } else {
       activeConv.parent.reaction.my_reaction = {
@@ -116,12 +113,10 @@ export const toggleLikeReducer = (
 
 export const incrementShareReducer = (
   state: StreamState,
-  action: PayloadAction<number>
+  action: PayloadAction<number>,
 ) => {
   const streamId = action.payload;
-  const post = state.streams.data.stream.find(
-    (p) => p.stream_id === streamId
-  );
+  const post = state.streams.data.stream.find((p) => p.stream_id === streamId);
   if (post) {
     post.shares = (post.shares || 0) + 1;
   }
@@ -144,7 +139,7 @@ export const addReplyReducer = (
     fullname: string;
     avatar: string;
     content: string;
-  }>
+  }>,
 ) => {
   const { streamId, username, fullname, avatar, content } = action.payload;
 
@@ -191,9 +186,7 @@ export const addReplyReducer = (
   }
 
   // Also increment total replies in feed stream list
-  const post = state.streams.data.stream.find(
-    (p) => p.stream_id === streamId
-  );
+  const post = state.streams.data.stream.find((p) => p.stream_id === streamId);
   if (post) {
     post.total_replies += 1;
   }
@@ -201,7 +194,7 @@ export const addReplyReducer = (
 
 export const appendStreamsReducer = (
   state: StreamState,
-  action: PayloadAction<StreamPost[]>
+  action: PayloadAction<StreamPost[]>,
 ) => {
   if (state.streams.data.pagination.is_last_page) return;
 
