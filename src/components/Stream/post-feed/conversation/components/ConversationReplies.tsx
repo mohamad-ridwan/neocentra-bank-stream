@@ -57,6 +57,7 @@ interface RowProps {
   onCommentToggle: () => void;
   showLoadMore: boolean;
   onLoadMore: () => void;
+  rowCount: number;
 }
 
 const Row = React.memo(function Row({
@@ -71,11 +72,17 @@ const Row = React.memo(function Row({
   onCommentToggle,
   showLoadMore,
   onLoadMore,
+  rowCount,
 }: Readonly<RowProps>) {
+  const rowStyle = React.useMemo(() => ({
+    ...style,
+    transform: `${style.transform || ""} scaleY(-1)`,
+  }), [style]);
+
   if (parent) {
-    if (index === 0) {
+    if (index === rowCount - 1) {
       return (
-        <div style={style} className="pt-6 pb-6 pr-2">
+        <div style={rowStyle} className="pt-6 pb-6 pr-2">
           <ParentPost
             parent={parent}
             hasLiked={parentHasLiked}
@@ -87,9 +94,9 @@ const Row = React.memo(function Row({
       );
     }
 
-    if (index === 1) {
+    if (index === rowCount - 2) {
       return (
-        <div style={style} className="pt-6 pb-2 pr-2">
+        <div style={rowStyle} className="pt-6 pb-2 pr-2">
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1">
             Replies ({replies.length})
           </h4>
@@ -98,9 +105,9 @@ const Row = React.memo(function Row({
     }
 
     if (showLoadMore) {
-      if (index === 2) {
+      if (index === rowCount - 3) {
         return (
-          <div style={style} className="pb-4 pr-2">
+          <div style={rowStyle} className="pb-4 pr-2">
             <button
               onClick={onLoadMore}
               disabled={isLoading}
@@ -115,19 +122,19 @@ const Row = React.memo(function Row({
         );
       }
 
-      const reply = replies[index - 3];
+      const reply = replies[replies.length - 1 - index];
       if (!reply) return null;
       return (
-        <div style={style} className="pb-3 pr-2">
+        <div style={rowStyle} className="pb-3 pr-2">
           <ReplyItem reply={reply} onCommentToggle={onCommentToggle} />
         </div>
       );
     } else {
       // showLoadMore is false
       if (replies.length === 0) {
-        if (index === 2) {
+        if (index === rowCount - 3) {
           return (
-            <div style={style} className="pt-2 pb-6 pr-2">
+            <div style={rowStyle} className="pt-2 pb-6 pr-2">
               <div className="text-slate-500 text-xs py-8 text-center bg-slate-900/10 border border-dashed border-slate-800/50 rounded-2xl">
                 No replies yet. Be the first to start the conversation!
               </div>
@@ -137,19 +144,19 @@ const Row = React.memo(function Row({
         return null;
       }
 
-      const reply = replies[index - 2];
+      const reply = replies[replies.length - 1 - index];
       if (!reply) return null;
       return (
-        <div style={style} className="pb-3 pr-2">
+        <div style={rowStyle} className="pb-3 pr-2">
           <ReplyItem reply={reply} onCommentToggle={onCommentToggle} />
         </div>
       );
     }
   } else {
     // No parent
-    if (index === 0) {
+    if (index === rowCount - 1) {
       return (
-        <div style={style} className="pt-4 pb-2 pr-2">
+        <div style={rowStyle} className="pt-4 pb-2 pr-2">
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1">
             Replies ({replies.length})
           </h4>
@@ -158,9 +165,9 @@ const Row = React.memo(function Row({
     }
 
     if (showLoadMore) {
-      if (index === 1) {
+      if (index === rowCount - 2) {
         return (
-          <div style={style} className="pb-4 pr-2">
+          <div style={rowStyle} className="pb-4 pr-2">
             <button
               onClick={onLoadMore}
               disabled={isLoading}
@@ -175,19 +182,19 @@ const Row = React.memo(function Row({
         );
       }
 
-      const reply = replies[index - 2];
+      const reply = replies[replies.length - 1 - index];
       if (!reply) return null;
       return (
-        <div style={style} className="pb-3 pr-2">
+        <div style={rowStyle} className="pb-3 pr-2">
           <ReplyItem reply={reply} onCommentToggle={onCommentToggle} />
         </div>
       );
     } else {
       // showLoadMore is false
       if (replies.length === 0) {
-        if (index === 1) {
+        if (index === rowCount - 2) {
           return (
-            <div style={style} className="pt-2 pb-6 pr-2">
+            <div style={rowStyle} className="pt-2 pb-6 pr-2">
               <div className="text-slate-500 text-xs py-8 text-center bg-slate-900/10 border border-dashed border-slate-800/50 rounded-2xl">
                 No replies yet. Be the first to start the conversation!
               </div>
@@ -197,10 +204,10 @@ const Row = React.memo(function Row({
         return null;
       }
 
-      const reply = replies[index - 1];
+      const reply = replies[replies.length - 1 - index];
       if (!reply) return null;
       return (
-        <div style={style} className="pb-3 pr-2">
+        <div style={rowStyle} className="pb-3 pr-2">
           <ReplyItem reply={reply} onCommentToggle={onCommentToggle} />
         </div>
       );
@@ -293,6 +300,7 @@ export const ConversationReplies = React.memo(function ConversationReplies({
           className={`absolute inset-0 bg-slate-950 z-30 pt-16 pr-2 space-y-6 transition-opacity duration-300 ${
             isReady ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
+          style={{ transform: "scaleY(-1)" }}
         >
           {parent && (
             <div className="pb-6 border-b border-slate-800/40">
@@ -327,6 +335,7 @@ export const ConversationReplies = React.memo(function ConversationReplies({
               onCommentToggle,
               showLoadMore,
               onLoadMore: loadMore,
+              rowCount,
             }}
             className="scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
             style={{
@@ -334,6 +343,7 @@ export const ConversationReplies = React.memo(function ConversationReplies({
               width: "100%",
               overflow: "hidden",
               overflowAnchor: "none",
+              // transform: "scaleY(-1)",
             }}
             overscanCount={5}
           />

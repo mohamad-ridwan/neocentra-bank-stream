@@ -315,7 +315,7 @@ const initialMockReplies: MockConversation[] = [
 const generatedReplies = generateMockReplies(
   1,
   1003,
-  500,
+  200,
   (index) =>
     `Generated dynamic reply #${index + 1} with custom message. Feeling extremely satisfied with the speed and reliability.`,
   "Dynamic User",

@@ -12,9 +12,15 @@ export const loadConversationReducer = (
   const conversationRecord = INITIAL_MOCK_REPLIES.find(
     (r) => r.stream_id === streamId,
   );
-  const replies = conversationRecord ? conversationRecord.replies : [];
+  const rawReplies = conversationRecord ? conversationRecord.replies : [];
 
-  // Slice initial replies for demo: take last 10 replies
+  // Sort replies chronologically from oldest to newest
+  const replies = [...rawReplies].sort(
+    (a, b) =>
+      new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+  );
+
+  // Slice initial replies for demo: take last 20 replies
   const initialCount = Math.min(20, replies.length);
   const slicedReplies = replies.slice(-initialCount);
 
@@ -23,7 +29,7 @@ export const loadConversationReducer = (
     replies: slicedReplies,
   };
 
-  // If total replies > 10, set total to 100 for the pagination demo, else use actual replies length
+  // If total replies > 20, set total to 200 for the pagination demo, else use actual replies length
   const hasMore = replies.length > 20;
   state.conversations.data.pagination.total = hasMore ? 200 : replies.length;
   state.conversations.data.pagination.is_last_page = hasMore;
@@ -40,8 +46,13 @@ export const prependConversationRepliesReducer = (
   const { replies } = action.payload;
   const activeConv = state.conversations.data.conversation;
   if (activeConv) {
+    // Sort incoming (older) replies oldest to newest
+    const sortedReplies = [...replies].sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+    );
     // Prepend the new replies
-    activeConv.replies = [...replies, ...activeConv.replies];
+    activeConv.replies = [...sortedReplies, ...activeConv.replies];
 
     // Increment total replies count in parent post
     if (activeConv.parent) {

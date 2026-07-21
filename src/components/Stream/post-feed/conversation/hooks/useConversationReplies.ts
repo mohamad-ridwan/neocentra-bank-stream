@@ -55,7 +55,7 @@ export function useConversationReplies({
     setIsLoading(true);
 
     setTimeout(() => {
-      const startId = 20000 + replies.length;
+      const startId = 2000 + replies.length;
       const count = 20;
       const newReplies = generateMockReplies(
         parentStreamId,
@@ -67,7 +67,7 @@ export function useConversationReplies({
 
       dispatch(prependConversationReplies({ replies: newReplies }));
       setIsLoading(false);
-    }, 1500);
+    }, 0);
   }, [isLoading, isLastPage, replies.length, parentStreamId, dispatch]);
 
   // Sync scroll height and list scrollTop on container scroll events.
@@ -112,8 +112,39 @@ export function useConversationReplies({
     };
 
     const container = scrollContainerRef.current;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (!container) return;
+      e.preventDefault();
+      container.scrollTop -= e.deltaY;
+    };
+
+    let touchStartClientY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        touchStartClientY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 1 && container) {
+        const currentClientY = e.touches[0].clientY;
+        const deltaY = currentClientY - touchStartClientY;
+        container.scrollTop += deltaY;
+        touchStartClientY = currentClientY;
+        e.preventDefault();
+      }
+    };
+
     if (container) {
       container.addEventListener("scroll", handleScroll);
+      container.addEventListener("wheel", handleWheel, { passive: false });
+      container.addEventListener("touchstart", handleTouchStart, {
+        passive: true,
+      });
+      container.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
     }
 
     // Initial sync
@@ -123,6 +154,9 @@ export function useConversationReplies({
       window.removeEventListener("resize", handleResize);
       if (container) {
         container.removeEventListener("scroll", handleScroll);
+        container.removeEventListener("wheel", handleWheel);
+        container.removeEventListener("touchstart", handleTouchStart);
+        container.removeEventListener("touchmove", handleTouchMove);
       }
     };
   }, [scrollContainerRef]);
@@ -149,64 +183,65 @@ export function useConversationReplies({
   }, [totalHeight]);
 
   // Reset refs/state when parentStreamId changes
-  useEffect(() => {
-    setHasAutoScrolled(false);
-  }, [parentStreamId]);
+  // useEffect(() => {
+  //   setHasAutoScrolled(false);
+  // }, [parentStreamId]);
 
   // Handle auto-scroll to latest messages (bottom) on first load
-  useEffect(() => {
-    if (isMobile) return;
+  // useEffect(() => {
+  //   if (isMobile) return;
 
-    if (
-      parentStreamId &&
-      replies.length > 0 &&
-      !hasAutoScrolled &&
-      totalHeight &&
-      totalHeight > 100
-    ) {
-      const scrollContainer = scrollContainerRef.current;
-      if (scrollContainer) {
-        let frameId: number;
-        let lastHeight = scrollContainer.scrollHeight;
-        let consecutiveMatches = 0;
+  //   if (
+  //     parentStreamId &&
+  //     replies.length > 0 &&
+  //     !hasAutoScrolled &&
+  //     totalHeight &&
+  //     totalHeight > 100
+  //   ) {
+  //     const scrollContainer = scrollContainerRef.current;
+  //     if (scrollContainer) {
+  //       let frameId: number;
+  //       let lastHeight = scrollContainer.scrollHeight;
+  //       let consecutiveMatches = 0;
 
-        const checkAndScroll = () => {
-          const container = scrollContainerRef.current;
-          if (!container) return;
+  //       const checkAndScroll = () => {
+  //         const container = scrollContainerRef.current;
+  //         if (!container) return;
 
-          const currentHeight = container.scrollHeight;
-          container.scrollTop = currentHeight;
+  //         const currentHeight = container.scrollHeight;
+  //         // container.scrollTop = currentHeight;
 
-          if (currentHeight === lastHeight) {
-            consecutiveMatches++;
-            if (consecutiveMatches >= 15) {
-              setHasAutoScrolled(true);
-              return;
-            }
-          } else {
-            consecutiveMatches = 0;
-            lastHeight = currentHeight;
-          }
+  //         if (currentHeight === lastHeight) {
+  //           consecutiveMatches++;
+  //           if (consecutiveMatches >= 0) {
+  //             setHasAutoScrolled(true);
+  //             return;
+  //           }
+  //         } else {
+  //           consecutiveMatches = 0;
+  //           lastHeight = currentHeight;
+  //         }
 
-          frameId = requestAnimationFrame(checkAndScroll);
-        };
+  //         frameId = requestAnimationFrame(checkAndScroll);
+  //       };
 
-        frameId = requestAnimationFrame(checkAndScroll);
-        return () => cancelAnimationFrame(frameId);
-      }
-    }
-  }, [
-    parentStreamId,
-    replies.length,
-    totalHeight,
-    scrollContainerRef,
-    hasAutoScrolled,
-    isMobile,
-  ]);
+  //       frameId = requestAnimationFrame(checkAndScroll);
+  //       return () => cancelAnimationFrame(frameId);
+  //     }
+  //   }
+  // }, [
+  //   parentStreamId,
+  //   replies.length,
+  //   totalHeight,
+  //   scrollContainerRef,
+  //   hasAutoScrolled,
+  //   isMobile,
+  // ]);
 
   const isReady = useMemo(() => {
-    return replies.length === 0 || isMobile || hasAutoScrolled;
-  }, [replies.length, isMobile, hasAutoScrolled]);
+    // return replies.length === 0 || isMobile || hasAutoScrolled;
+    return replies.length === 0 || isMobile || true;
+  }, [replies.length, isMobile]);
 
   return {
     viewportHeight,
