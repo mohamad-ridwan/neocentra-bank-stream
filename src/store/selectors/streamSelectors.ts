@@ -7,60 +7,59 @@ export const selectStreamState = (state: any): StreamState => state.streams;
 // Select list of streams
 export const selectStreamsList = createSelector(
   [selectStreamState],
-  (streamState) => streamState?.streams?.data?.stream ?? []
+  (streamState) => streamState?.streams?.data?.stream ?? [],
 );
 
 // Select pagination of streams
 export const selectStreamsPagination = createSelector(
   [selectStreamState],
-  (streamState) => streamState?.streams?.data?.pagination
+  (streamState) => streamState?.streams?.data?.pagination,
 );
 
 // Intermediate selector targeting conversations data
 export const selectConversationsData = createSelector(
   [selectStreamState],
-  (streamState) => streamState?.conversations?.data
+  (streamState) => streamState?.conversations?.data,
 );
 
 // Select active conversation object
 export const selectActiveConversation = createSelector(
   [selectConversationsData],
-  (conversationsData) => conversationsData?.conversation
+  (conversationsData) => conversationsData?.conversation,
 );
 
 // Select replies inside the active conversation
 export const selectActiveReplies = createSelector(
   [selectConversationsData],
-  (conversationsData) => conversationsData?.conversation?.replies ?? []
+  (conversationsData) => conversationsData?.conversation?.replies ?? [],
 );
 
 // Select the parent post in the active conversation
 export const selectActiveParentStream = createSelector(
   [selectConversationsData],
-  (conversationsData) => conversationsData?.conversation?.parent ?? null
+  (conversationsData) => conversationsData?.conversation?.parent ?? null,
 );
 
 // Select the parent stream ID of the active conversation
 export const selectActiveParentStreamId = createSelector(
   [selectActiveParentStream],
-  (parent) => parent?.stream_id
+  (parent) => parent?.stream_id,
 );
 
 // Select the parent reaction of the active conversation
 export const selectActiveParentReaction = createSelector(
   [selectActiveParentStream],
-  (parent) => parent?.reaction?.my_reaction as ReactionDetails | undefined
+  (parent) => parent?.reaction?.my_reaction as ReactionDetails | undefined,
 );
 
 // Select conversation pagination state
 export const selectConversationPagination = createSelector(
   [selectStreamState],
-  (streamState) => streamState?.conversations?.data?.pagination
+  (streamState) => streamState?.conversations?.data?.pagination,
 );
 
 // Select whether a reply has been added
 export const selectIsReplyAdded = createSelector(
   [selectStreamState],
-  (streamState) => streamState?.conversations?.data?.isReplyAdded ?? false
+  (streamState) => streamState?.conversations?.data?.isReplyAdded ?? false,
 );
-

@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { StreamState } from "@/types/stream.types";
 import { INITIAL_STREAM_POSTS } from "@/models/stream";
 import {
@@ -11,7 +11,6 @@ import {
   setIsReplyAddedReducer,
   closeConversationReducer,
 } from "../reducers/streamReducers";
-
 
 const initialState: StreamState = {
   streams: {

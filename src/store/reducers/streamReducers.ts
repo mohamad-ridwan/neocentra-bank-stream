@@ -226,9 +226,6 @@ export const setIsReplyAddedReducer = (
   state.conversations.data.isReplyAdded = action.payload;
 };
 
-export const closeConversationReducer = (
-  state: StreamState,
-) => {
+export const closeConversationReducer = (state: StreamState) => {
   state.conversations.data.conversation = null;
 };
-

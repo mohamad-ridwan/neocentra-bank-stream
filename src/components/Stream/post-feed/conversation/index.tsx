@@ -10,15 +10,14 @@ interface ConversationModalContentProps {
 export default function ConversationModalContent({
   onClose,
 }: Readonly<ConversationModalContentProps>) {
-  const { handleAddComment, inputRef } = useStream();
-
+  const { inputRef, handleCommentClick } = useStream();
   return (
     <div className="flex flex-col md:flex-row h-full w-full bg-transparent text-slate-100 overflow-hidden">
-      <PostFeed onClose={onClose} />
+      <PostFeed onClose={onClose} handleCommentClick={handleCommentClick} />
       <Conversation
-        onAddComment={handleAddComment as any}
         onClose={onClose}
         inputRef={inputRef}
+        handleCommentClick={handleCommentClick}
       />
     </div>
   );

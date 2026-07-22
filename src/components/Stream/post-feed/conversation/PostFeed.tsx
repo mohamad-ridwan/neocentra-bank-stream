@@ -7,10 +7,12 @@ import { useStream } from "../../hooks/useStream";
 
 interface PostFeedProps {
   onClose: () => void;
+  handleCommentClick: () => void;
 }
 
 const PostFeed = React.memo(function PostFeed({
   onClose,
+  handleCommentClick,
 }: Readonly<PostFeedProps>) {
   console.log("POST FEED RENDERED");
   const {
@@ -18,7 +20,6 @@ const PostFeed = React.memo(function PostFeed({
     hasLiked,
     handleLike,
     handleShare,
-    handleCommentClick,
   } = useStream();
 
   return (

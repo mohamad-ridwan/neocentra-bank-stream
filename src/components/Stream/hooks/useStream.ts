@@ -160,7 +160,7 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, []);
+  }, [inputRef.current]);
 
   return {
     posts,

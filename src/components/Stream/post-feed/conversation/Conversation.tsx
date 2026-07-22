@@ -2,28 +2,22 @@ import React from "react";
 import { X } from "lucide-react";
 import { ConversationReplies } from "./components/ConversationReplies";
 import { CommentInput } from "./components/CommentInput";
+import { useStream } from "../../hooks/useStream";
 
 interface ConversationProps {
-  onAddComment: (text: string) => void;
   onClose: () => void;
-  inputRef?: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement>;
+  handleCommentClick: () => void;
 }
 
 const Conversation = React.memo(
   function Conversation({
-    onAddComment,
     onClose,
     inputRef,
+    handleCommentClick,
   }: Readonly<ConversationProps>) {
-    const localInputRef = React.useRef<HTMLInputElement>(null);
-    const resolvedInputRef = inputRef || localInputRef;
+    const { handleAddComment } = useStream();
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
-
-    const handleCommentClick = React.useCallback(() => {
-      if (resolvedInputRef.current) {
-        resolvedInputRef.current.focus();
-      }
-    }, [resolvedInputRef]);
 
     return (
       <div className="w-full md:max-w-md lg:max-w-lg h-full bg-slate-950 border-l border-slate-800/60 shadow-2xl flex flex-col relative overflow-hidden">
@@ -52,7 +46,7 @@ const Conversation = React.memo(
         </div>
 
         {/* Sticky bottom content: comment input box */}
-        <CommentInput onAddComment={onAddComment} inputRef={resolvedInputRef} />
+        <CommentInput onAddComment={handleAddComment} inputRef={inputRef} />
       </div>
     );
   },
