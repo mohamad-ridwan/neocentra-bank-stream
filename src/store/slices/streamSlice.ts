@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { StreamState } from "@/types/stream.types";
 import { INITIAL_STREAM_POSTS } from "@/models/stream";
 import {
@@ -8,6 +8,7 @@ import {
   addReplyReducer,
   appendStreamsReducer,
   prependConversationRepliesReducer,
+  setIsReplyAddedReducer,
 } from "../reducers/streamReducers";
 
 const initialState: StreamState = {
@@ -24,6 +25,7 @@ const initialState: StreamState = {
   conversations: {
     data: {
       conversation: null,
+      isReplyAdded: false,
       pagination: {
         is_last_page: true,
         total: 100,
@@ -43,6 +45,7 @@ export const streamSlice = createSlice({
     addReply: addReplyReducer,
     appendStreams: appendStreamsReducer,
     prependConversationReplies: prependConversationRepliesReducer,
+    setIsReplyAdded: setIsReplyAddedReducer,
   },
 });
 
@@ -53,5 +56,6 @@ export const {
   addReply,
   appendStreams,
   prependConversationReplies,
+  setIsReplyAdded,
 } = streamSlice.actions;
 export default streamSlice.reducer;

@@ -5,11 +5,15 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useDynamicRowHeight } from "react-window";
 import { ReplyPost, StreamPost } from "@/types/stream.types";
 import { generateMockReplies } from "@/models/stream";
-import { prependConversationReplies } from "@/store/slices/streamSlice";
+import {
+  prependConversationReplies,
+  setIsReplyAdded,
+} from "@/store/slices/streamSlice";
+import { selectIsReplyAdded } from "@/store/selectors/streamSelectors";
 
 interface UseConversationRepliesProps {
   parent: StreamPost | null;
@@ -27,6 +31,7 @@ export function useConversationReplies({
   scrollContainerRef,
 }: UseConversationRepliesProps) {
   const dispatch = useDispatch();
+  const isReplyAdded = useSelector(selectIsReplyAdded);
   const [hasAutoScrolled, setHasAutoScrolled] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
@@ -108,7 +113,11 @@ export function useConversationReplies({
         0,
         scrollContainerRef.current.scrollTop - wrapperRef.current.offsetTop,
       );
-      listElement.scrollTop = scrollTop;
+
+      // Only set if they are different to prevent redundant scroll events and loops
+      if (Math.abs(listElement.scrollTop - scrollTop) > 1) {
+        listElement.scrollTop = scrollTop;
+      }
     };
 
     const container = scrollContainerRef.current;
@@ -181,6 +190,81 @@ export function useConversationReplies({
   const wrapperHeight = useMemo((): string | number => {
     return totalHeight || "100vh";
   }, [totalHeight]);
+
+  // Scroll to newest reply when a reply is added
+  useEffect(() => {
+    if (isReplyAdded) {
+      if (
+        parentStreamId &&
+        replies.length > 0 &&
+        totalHeight &&
+        totalHeight > 100
+      ) {
+        const firstIndex = 0;
+        if (listRef.current) {
+          if (!listRef.current.scrollToItem) {
+            listRef.current.scrollToItem = (
+              index: number,
+              align: "auto" | "center" | "end" | "smart" | "start" = "auto",
+            ) => {
+              if (typeof listRef.current.scrollToRow === "function") {
+                listRef.current.scrollToRow({
+                  index,
+                  align,
+                  behavior: "smooth",
+                });
+              }
+            };
+          }
+          // 'start' is used because index 0 is physically at the top (visually the bottom due to scaleY(-1))
+          listRef.current.scrollToItem(firstIndex, "start");
+          dispatch(setIsReplyAdded(false));
+        }
+      }
+    }
+  }, [isReplyAdded, parentStreamId, replies.length, totalHeight, dispatch]);
+
+  // Dynamically attach scroll listener to the virtualized list element to sync scrollTop back to the parent scroll container.
+  // This prevents scroll jumping issues when user manual-scrolls after programmatic auto-scrolling.
+  useEffect(() => {
+    if (listRef.current && listRef.current.element) {
+      const listElement = listRef.current.element;
+      if (!listElement._hasScrollListener) {
+        listElement._hasScrollListener = true;
+        const handleListScroll = () => {
+          if (!scrollContainerRef.current || !wrapperRef.current) return;
+          const targetParentScrollTop =
+            listElement.scrollTop + wrapperRef.current.offsetTop;
+          if (
+            Math.abs(
+              scrollContainerRef.current.scrollTop - targetParentScrollTop,
+            ) > 1
+          ) {
+            scrollContainerRef.current.scrollTop = targetParentScrollTop;
+          }
+        };
+        listElement.addEventListener("scroll", handleListScroll);
+        listElement._cleanupScrollListener = () => {
+          listElement.removeEventListener("scroll", handleListScroll);
+          delete listElement._hasScrollListener;
+          delete listElement._cleanupScrollListener;
+        };
+      }
+    }
+  });
+
+  // Reset isReplyAdded and clean up the list scroll listener on unmount
+  useEffect(() => {
+    return () => {
+      dispatch(setIsReplyAdded(false));
+      if (listRef.current && listRef.current.element) {
+        const listElement = listRef.current.element;
+        if (typeof listElement._cleanupScrollListener === "function") {
+          listElement._cleanupScrollListener();
+        }
+      }
+    };
+  }, [dispatch]);
 
   // Reset refs/state when parentStreamId changes
   // useEffect(() => {

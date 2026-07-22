@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { List } from "react-window";
 import { Loader2 } from "lucide-react";
 import { ReplyPost, StreamPost } from "@/types/stream.types";
@@ -74,10 +74,13 @@ const Row = React.memo(function Row({
   onLoadMore,
   rowCount,
 }: Readonly<RowProps>) {
-  const rowStyle = React.useMemo(() => ({
-    ...style,
-    transform: `${style.transform || ""} scaleY(-1)`,
-  }), [style]);
+  const rowStyle = React.useMemo(
+    () => ({
+      ...style,
+      transform: `${style.transform || ""} scaleY(-1)`,
+    }),
+    [style],
+  );
 
   if (parent) {
     if (index === rowCount - 1) {

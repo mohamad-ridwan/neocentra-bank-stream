@@ -194,6 +194,7 @@ export const addReplyReducer = (
     activeConv.replies = [...activeConv.replies, newReply];
     activeConv.parent.total_replies += 1;
     state.conversations.data.pagination.total = activeConv.replies.length;
+    state.conversations.data.isReplyAdded = true;
   }
 
   // Also increment total replies in feed stream list
@@ -216,4 +217,11 @@ export const appendStreamsReducer = (
   if (state.streams.data.stream.length >= state.streams.data.pagination.total) {
     state.streams.data.pagination.is_last_page = true;
   }
+};
+
+export const setIsReplyAddedReducer = (
+  state: StreamState,
+  action: PayloadAction<boolean>,
+) => {
+  state.conversations.data.isReplyAdded = action.payload;
 };

@@ -76,6 +76,7 @@ export interface StreamState {
   conversations: {
     data: {
       conversation: Conversation | null;
+      isReplyAdded: boolean;
       pagination: Pagination;
     };
     message: string;

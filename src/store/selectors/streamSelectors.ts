@@ -40,3 +40,9 @@ export const selectConversationPagination = createSelector(
   (streamState) => streamState?.conversations?.data?.pagination
 );
 
+// Select whether a reply has been added
+export const selectIsReplyAdded = createSelector(
+  [selectStreamState],
+  (streamState) => streamState?.conversations?.data?.isReplyAdded ?? false
+);
+
