@@ -1,28 +1,14 @@
 import React from "react";
 import { List } from "react-window";
+import { useSelector } from "react-redux";
+import { selectStreamsList } from "@/store/selectors/streamSelectors";
 import { usePostFeed } from "../hooks/usePostFeed";
 import { StreamPost } from "@/types/stream.types";
 import PostCard from "./PostCard";
 import PostSkeleton from "./loaders/PostSkeleton";
 
-interface PostsFeedProps {
-  posts: StreamPost[];
-  activeConversation: any;
-  showComments: Record<number, boolean>;
-  handleLike: (streamId: number) => void;
-  handleShare: (streamId: number) => void;
-  toggleComments: (streamId: number) => void;
-  handleAddComment: (streamId: number, text: string) => void;
-}
-
 interface RowProps {
   posts: StreamPost[];
-  activeConversation: any;
-  showComments: Record<number, boolean>;
-  handleLike: (streamId: number) => void;
-  handleShare: (streamId: number) => void;
-  toggleComments: (streamId: number) => void;
-  handleAddComment: (streamId: number, text: string) => void;
 }
 
 const Row = React.memo(
@@ -30,12 +16,6 @@ const Row = React.memo(
     index,
     style,
     posts,
-    activeConversation,
-    showComments,
-    handleLike,
-    handleShare,
-    toggleComments,
-    handleAddComment,
   }: {
     index: number;
     style: React.CSSProperties;
@@ -51,15 +31,7 @@ const Row = React.memo(
 
     return (
       <div style={style} className="pb-3">
-        <PostCard
-          post={post}
-          activeConversation={activeConversation}
-          showComments={!!showComments[post.stream_id]}
-          onLike={() => handleLike(post.stream_id)}
-          onShare={() => handleShare(post.stream_id)}
-          onCommentToggle={() => toggleComments(post.stream_id)}
-          onAddComment={(text) => handleAddComment(post.stream_id, text)}
-        />
+        <PostCard post={post} />
       </div>
     );
   },
@@ -67,15 +39,9 @@ const Row = React.memo(
 
 Row.displayName = "PostFeedRow";
 
-export default function PostsFeed({
-  posts,
-  activeConversation,
-  showComments,
-  handleLike,
-  handleShare,
-  toggleComments,
-  handleAddComment,
-}: Readonly<PostsFeedProps>) {
+export default function PostsFeed() {
+  const posts = useSelector(selectStreamsList);
+
   const {
     viewportHeight,
     wrapperRef,
@@ -106,15 +72,7 @@ export default function PostsFeed({
           rowHeight={rowHeight}
           rowComponent={Row as any}
           onRowsRendered={onRowsRendered}
-          rowProps={{
-            posts,
-            activeConversation,
-            showComments,
-            handleLike,
-            handleShare,
-            toggleComments,
-            handleAddComment,
-          }}
+          rowProps={{ posts }}
           className="scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
           style={{ height: "100%", width: "100%", overflow: "hidden" }}
           overscanCount={5}

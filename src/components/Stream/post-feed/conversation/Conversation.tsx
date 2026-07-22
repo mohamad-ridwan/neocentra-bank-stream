@@ -1,22 +1,21 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { StreamPost, ReplyPost } from "@/types/stream.types";
 import { X } from "lucide-react";
-import { selectConversationPagination } from "@/store/selectors/streamSelectors";
+import {
+  selectActiveParentStream,
+  selectActiveReplies,
+  selectConversationPagination,
+} from "@/store/selectors/streamSelectors";
 import { ConversationReplies } from "./components/ConversationReplies";
 import { CommentInput } from "./components/CommentInput";
 
 interface ConversationProps {
-  parent: StreamPost | null;
-  replies: ReplyPost[];
   onAddComment: (text: string) => void;
   onClose: () => void;
   inputRef?: React.RefObject<HTMLInputElement>;
 }
 
 const Conversation = React.memo(function Conversation({
-  parent,
-  replies,
   onAddComment,
   onClose,
   inputRef,
@@ -25,6 +24,8 @@ const Conversation = React.memo(function Conversation({
   const resolvedInputRef = inputRef || localInputRef;
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
+  const parent = useSelector(selectActiveParentStream);
+  const replies = useSelector(selectActiveReplies);
   const pagination = useSelector(selectConversationPagination);
   const isLastPage = pagination?.is_last_page ?? false;
 
@@ -59,7 +60,7 @@ const Conversation = React.memo(function Conversation({
       >
         {/* List replies (incorporating parent post virtualized) */}
         <ConversationReplies
-          parent={parent}
+          parent={parent ?? null}
           parentStreamId={parentStreamId}
           replies={replies}
           onCommentToggle={handleCommentClick}

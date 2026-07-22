@@ -55,8 +55,6 @@ const mockPost: StreamPost = {
 export const Default: Story = {
   args: {
     post: mockPost,
-    activeConversation: null,
-    showComments: false,
     onLike: () => console.log("Like clicked"),
     onShare: () => console.log("Share clicked"),
     onCommentToggle: () => console.log("Comment Toggle clicked"),
@@ -143,8 +141,6 @@ export const Expanded: StoryObj<
 > = {
   args: {
     post: mockPost,
-    activeConversation: null,
-    showComments: false,
     onLike: () => console.log("Like clicked"),
     onShare: () => console.log("Share clicked"),
     onCommentToggle: () => console.log("Comment Toggle clicked"),

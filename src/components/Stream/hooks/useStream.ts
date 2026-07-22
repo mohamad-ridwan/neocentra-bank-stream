@@ -28,17 +28,21 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
   const activeUserAvatar = auth?.user?.avatar || "";
 
   const triggerToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 3000);
+    toast.success(msg);
   };
 
-  const memoizedStreamId = React.useMemo(() => streamId, [streamId]);
+  const effectiveStreamId = streamId ?? activeConversation?.parent?.stream_id;
+  const effectiveMyReaction =
+    myReaction ?? (activeConversation?.parent?.reaction?.my_reaction as ReactionDetails);
+
+  const memoizedStreamId = React.useMemo(
+    () => effectiveStreamId,
+    [effectiveStreamId],
+  );
 
   const hasLiked = React.useMemo(() => {
-    return !!myReaction;
-  }, [myReaction]);
+    return !!effectiveMyReaction;
+  }, [effectiveMyReaction]);
 
   const handleLike = useCallback(
     (streamIdOrEvent?: number | React.MouseEvent) => {

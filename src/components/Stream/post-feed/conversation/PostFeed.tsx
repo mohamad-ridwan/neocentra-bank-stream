@@ -1,5 +1,4 @@
 import React from "react";
-import { StreamPost, ReactionDetails } from "@/types/stream.types";
 import { X } from "lucide-react";
 import PostHeader from "../PostHeader";
 import PostContent from "../PostContent";
@@ -7,19 +6,16 @@ import PostActionBar from "../PostActionBar";
 import { useStream } from "../../hooks/useStream";
 
 interface PostFeedProps {
-  parent: StreamPost | null;
   onClose: () => void;
 }
 
 const PostFeed = React.memo(function PostFeed({
-  parent,
   onClose,
 }: Readonly<PostFeedProps>) {
   console.log("POST FEED RENDERED");
-  const { hasLiked, handleLike, handleShare, handleCommentClick } = useStream(
-    parent?.stream_id,
-    parent?.reaction?.my_reaction as ReactionDetails,
-  );
+  const { activeConversation, hasLiked, handleLike, handleShare, handleCommentClick } =
+    useStream();
+  const parent = activeConversation?.parent;
 
   return (
     <div
