@@ -9,24 +9,20 @@ interface PostsFeedProps {
   posts: StreamPost[];
   activeConversation: any;
   showComments: Record<number, boolean>;
-  newCommentTexts: Record<number, string>;
   handleLike: (streamId: number) => void;
   handleShare: (streamId: number) => void;
   toggleComments: (streamId: number) => void;
-  handleCommentTextChange: (streamId: number, text: string) => void;
-  handleAddComment: (streamId: number, e: React.FormEvent) => void;
+  handleAddComment: (streamId: number, text: string) => void;
 }
 
 interface RowProps {
   posts: StreamPost[];
   activeConversation: any;
   showComments: Record<number, boolean>;
-  newCommentTexts: Record<number, string>;
   handleLike: (streamId: number) => void;
   handleShare: (streamId: number) => void;
   toggleComments: (streamId: number) => void;
-  handleCommentTextChange: (streamId: number, text: string) => void;
-  handleAddComment: (streamId: number, e: React.FormEvent) => void;
+  handleAddComment: (streamId: number, text: string) => void;
 }
 
 const Row = React.memo(
@@ -36,11 +32,9 @@ const Row = React.memo(
     posts,
     activeConversation,
     showComments,
-    newCommentTexts,
     handleLike,
     handleShare,
     toggleComments,
-    handleCommentTextChange,
     handleAddComment,
   }: {
     index: number;
@@ -61,14 +55,10 @@ const Row = React.memo(
           post={post}
           activeConversation={activeConversation}
           showComments={!!showComments[post.stream_id]}
-          commentText={newCommentTexts[post.stream_id] || ""}
           onLike={() => handleLike(post.stream_id)}
           onShare={() => handleShare(post.stream_id)}
           onCommentToggle={() => toggleComments(post.stream_id)}
-          onCommentTextChange={(text) =>
-            handleCommentTextChange(post.stream_id, text)
-          }
-          onAddComment={(e) => handleAddComment(post.stream_id, e)}
+          onAddComment={(text) => handleAddComment(post.stream_id, text)}
         />
       </div>
     );
@@ -81,11 +71,9 @@ export default function PostsFeed({
   posts,
   activeConversation,
   showComments,
-  newCommentTexts,
   handleLike,
   handleShare,
   toggleComments,
-  handleCommentTextChange,
   handleAddComment,
 }: Readonly<PostsFeedProps>) {
   const {
@@ -122,11 +110,9 @@ export default function PostsFeed({
             posts,
             activeConversation,
             showComments,
-            newCommentTexts,
             handleLike,
             handleShare,
             toggleComments,
-            handleCommentTextChange,
             handleAddComment,
           }}
           className="scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"

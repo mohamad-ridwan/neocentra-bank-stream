@@ -1,38 +1,31 @@
 import React from "react";
-import { StreamPost, ReplyPost } from "@/types/stream.types";
+import { StreamPost, ReplyPost, ReactionDetails } from "@/types/stream.types";
 import PostFeed from "./PostFeed";
 import Conversation from "./Conversation";
+import { useStream } from "../../hooks/useStream";
 
 interface ConversationModalContentProps {
   parent: StreamPost | null;
   replies: ReplyPost[];
-  commentText: string;
-  onCommentTextChange: (text: string) => void;
-  onAddComment: (e: React.FormEvent) => void;
   onClose: () => void;
-  hasLiked: boolean;
-  onLike: () => void;
-  onShare: () => void;
 }
 
 export default function ConversationModalContent({
   parent,
   replies,
-  commentText,
-  onCommentTextChange,
-  onAddComment,
   onClose,
-  hasLiked,
-  onLike,
-  onShare,
 }: Readonly<ConversationModalContentProps>) {
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
-  const handleCommentClick = React.useCallback(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
+  const {
+    hasLiked,
+    handleLike,
+    handleShare,
+    handleAddComment,
+    handleCommentClick,
+    inputRef,
+  } = useStream(
+    parent?.stream_id,
+    parent?.reaction?.my_reaction as ReactionDetails,
+  );
 
   return (
     <div className="flex flex-col md:flex-row h-full w-full bg-transparent text-slate-100 overflow-hidden">
@@ -40,20 +33,18 @@ export default function ConversationModalContent({
         parent={parent}
         onClose={onClose}
         hasLiked={hasLiked}
-        onLike={onLike}
-        onShare={onShare}
+        onLike={handleLike as any}
+        onShare={handleShare as any}
         onCommentClick={handleCommentClick}
       />
       <Conversation
         parent={parent}
         replies={replies}
-        commentText={commentText}
-        onCommentTextChange={onCommentTextChange}
-        onAddComment={onAddComment}
+        onAddComment={handleAddComment as any}
         onClose={onClose}
         hasLiked={hasLiked}
-        onLike={onLike}
-        onShare={onShare}
+        onLike={handleLike as any}
+        onShare={handleShare as any}
         inputRef={inputRef}
       />
     </div>

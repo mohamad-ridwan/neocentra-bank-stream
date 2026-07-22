@@ -22,6 +22,7 @@ const PostFeed = React.memo(function PostFeed({
   onShare,
   onCommentClick,
 }: Readonly<PostFeedProps>) {
+  console.log("POST FEED RENDERED");
   return (
     <div
       className="hidden md:flex flex-col justify-center items-start p-12 md:pl-32 flex-1 h-full relative"

@@ -16,7 +16,6 @@ import {
 import { selectIsReplyAdded } from "@/store/selectors/streamSelectors";
 
 interface UseConversationRepliesProps {
-  parent: StreamPost | null;
   replies: ReplyPost[];
   parentStreamId: number;
   isLastPage: boolean;
@@ -24,7 +23,6 @@ interface UseConversationRepliesProps {
 }
 
 export function useConversationReplies({
-  parent,
   replies,
   parentStreamId,
   isLastPage,
@@ -32,7 +30,7 @@ export function useConversationReplies({
 }: UseConversationRepliesProps) {
   const dispatch = useDispatch();
   const isReplyAdded = useSelector(selectIsReplyAdded);
-  const [hasAutoScrolled, setHasAutoScrolled] = useState(false);
+  // const [hasAutoScrolled, setHasAutoScrolled] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
   const [viewportHeight, setViewportHeight] = useState(800);
@@ -227,6 +225,7 @@ export function useConversationReplies({
   // Dynamically attach scroll listener to the virtualized list element to sync scrollTop back to the parent scroll container.
   // This prevents scroll jumping issues when user manual-scrolls after programmatic auto-scrolling.
   useEffect(() => {
+    console.log("hooks rendered");
     if (listRef.current && listRef.current.element) {
       const listElement = listRef.current.element;
       if (!listElement._hasScrollListener) {

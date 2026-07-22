@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { List } from "react-window";
 import { Loader2 } from "lucide-react";
 import { ReplyPost, StreamPost } from "@/types/stream.types";
@@ -253,7 +253,6 @@ export const ConversationReplies = React.memo(function ConversationReplies({
     loadMore,
     isReady,
   } = useConversationReplies({
-    parent,
     replies,
     parentStreamId,
     isLastPage,

@@ -10,13 +10,11 @@ export default function Stream() {
     posts,
     activeConversation,
     activeUser,
-    newCommentTexts,
     showComments,
     toastMessage,
     handleLike,
     handleShare,
     toggleComments,
-    handleCommentTextChange,
     handleAddComment,
   } = useStream();
 
@@ -43,16 +41,13 @@ export default function Stream() {
             </div>
           </div>
 
-          {/* Posts Feed */}
           <PostsFeed
             posts={posts}
             activeConversation={activeConversation}
             showComments={showComments}
-            newCommentTexts={newCommentTexts}
             handleLike={handleLike}
             handleShare={handleShare}
             toggleComments={toggleComments}
-            handleCommentTextChange={handleCommentTextChange}
             handleAddComment={handleAddComment}
           />
         </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { StreamPost } from "@/types/stream.types";
 import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
@@ -9,12 +9,10 @@ interface PostCardProps {
   post: StreamPost;
   activeConversation: any;
   showComments: boolean;
-  commentText: string;
   onLike: () => void;
   onShare: () => void;
   onCommentToggle: () => void;
-  onCommentTextChange: (text: string) => void;
-  onAddComment: (e: React.FormEvent) => void;
+  onAddComment: (text: string) => void;
   forceOpenTooltip?: boolean;
   forceOpenMenu?: boolean;
   forceHoverLike?: boolean;
@@ -27,11 +25,9 @@ export default function PostCard({
   post,
   activeConversation,
   showComments,
-  commentText,
   onLike,
   onShare,
   onCommentToggle,
-  onCommentTextChange,
   onAddComment,
   forceOpenTooltip,
   forceOpenMenu,
@@ -40,7 +36,9 @@ export default function PostCard({
   forceCopyLinkHover,
   demoLink,
 }: Readonly<PostCardProps>) {
-  const hasLiked = !!post.reaction.my_reaction;
+  const hasLiked = useMemo(() => {
+    return !!post.reaction.my_reaction;
+  }, [post?.reaction?.my_reaction]);
 
   return (
     <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 shadow-xl relative overflow-hidden transition-all duration-300 hover:border-slate-700/80">
@@ -66,13 +64,7 @@ export default function PostCard({
           streamId={post.stream_id}
           commentsCount={post.total_replies}
           activeConversation={activeConversation}
-          commentText={commentText}
-          onCommentTextChange={onCommentTextChange}
-          onAddComment={onAddComment}
           onClose={onCommentToggle}
-          hasLiked={hasLiked}
-          onLike={onLike}
-          onShare={onShare}
         />
       )}
     </div>

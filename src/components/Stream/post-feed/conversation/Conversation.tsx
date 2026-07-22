@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { StreamPost, ReplyPost } from "@/types/stream.types";
 import { X } from "lucide-react";
@@ -9,9 +9,7 @@ import { CommentInput } from "./components/CommentInput";
 interface ConversationProps {
   parent: StreamPost | null;
   replies: ReplyPost[];
-  commentText: string;
-  onCommentTextChange: (text: string) => void;
-  onAddComment: (e: React.FormEvent) => void;
+  onAddComment: (text: string) => void;
   onClose: () => void;
   hasLiked: boolean;
   onLike: () => void;
@@ -22,8 +20,6 @@ interface ConversationProps {
 const Conversation = React.memo(function Conversation({
   parent,
   replies,
-  commentText,
-  onCommentTextChange,
   onAddComment,
   onClose,
   hasLiked,
@@ -44,7 +40,9 @@ const Conversation = React.memo(function Conversation({
     }
   }, [resolvedInputRef]);
 
-  const parentStreamId = parent?.stream_id ?? 0;
+  const parentStreamId = useMemo(() => {
+    return parent?.stream_id ?? 0;
+  }, [parent?.stream_id]);
 
   return (
     <div className="w-full md:max-w-md lg:max-w-lg h-full bg-slate-950 border-l border-slate-800/60 shadow-2xl flex flex-col relative overflow-hidden">
@@ -80,12 +78,7 @@ const Conversation = React.memo(function Conversation({
       </div>
 
       {/* Sticky bottom content: comment input box */}
-      <CommentInput
-        commentText={commentText}
-        onCommentTextChange={onCommentTextChange}
-        onAddComment={onAddComment}
-        inputRef={resolvedInputRef}
-      />
+      <CommentInput onAddComment={onAddComment} inputRef={resolvedInputRef} />
     </div>
   );
 });
