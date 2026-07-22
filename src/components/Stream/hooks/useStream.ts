@@ -25,7 +25,6 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
   const activeParent = useSelector(selectActiveParentStream);
   const auth = useSelector((state: any) => state.auth);
 
-  const [showComments, setShowComments] = useState<Record<number, boolean>>({});
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const activeUser = auth?.user?.username || "Guest User";
@@ -84,19 +83,15 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
           : memoizedStreamId;
       if (!targetId) return;
 
-      setShowComments((prev) => {
-        const isOpening = !prev[targetId];
-        if (isOpening) {
-          dispatch(loadConversation(targetId));
-        }
-        return {
-          ...prev,
-          [targetId]: isOpening,
-        };
-      });
+      if (activeParentId === targetId) {
+        dispatch(closeConversation());
+      } else {
+        dispatch(loadConversation(targetId));
+      }
     },
-    [dispatch, memoizedStreamId],
+    [dispatch, memoizedStreamId, activeParentId],
   );
+
 
   const handleAddComment = useCallback(
     (streamIdOrText?: number | string | React.MouseEvent, text?: string) => {
@@ -171,7 +166,7 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
     activeUser,
     activeUserFullname,
     activeUserAvatar,
-    showComments,
+    showComments: activeParentId ? { [activeParentId]: true } : {},
     toastMessage,
     handleLike,
     handleShare,

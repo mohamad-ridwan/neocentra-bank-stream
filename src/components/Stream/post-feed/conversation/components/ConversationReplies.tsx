@@ -51,6 +51,7 @@ const ReplyItem = React.memo(
   },
   (prev, next) => {
     return (
+      prev.reply?.stream_id === next.reply?.stream_id &&
       prev.reply?.reaction?.my_reaction === next.reply?.reaction?.my_reaction
     );
   },
