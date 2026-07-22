@@ -3,7 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
 import {
   selectStreamsList,
-  selectActiveConversation,
+  selectActiveParentStream,
+  selectActiveParentStreamId,
+  selectActiveParentReaction,
 } from "@/store/selectors/streamSelectors";
 import {
   toggleLike,
@@ -17,7 +19,9 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
   const posts = useSelector(selectStreamsList);
-  const activeConversation = useSelector(selectActiveConversation);
+  const activeParentId = useSelector(selectActiveParentStreamId);
+  const activeParentReaction = useSelector(selectActiveParentReaction);
+  const activeParent = useSelector(selectActiveParentStream);
   const auth = useSelector((state: any) => state.auth);
 
   const [showComments, setShowComments] = useState<Record<number, boolean>>({});
@@ -31,9 +35,8 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
     toast.success(msg);
   };
 
-  const effectiveStreamId = streamId ?? activeConversation?.parent?.stream_id;
-  const effectiveMyReaction =
-    myReaction ?? (activeConversation?.parent?.reaction?.my_reaction as ReactionDetails);
+  const effectiveStreamId = streamId ?? activeParentId;
+  const effectiveMyReaction = myReaction ?? activeParentReaction;
 
   const memoizedStreamId = React.useMemo(
     () => effectiveStreamId,
@@ -159,7 +162,7 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
 
   return {
     posts,
-    activeConversation,
+    activeParent,
     activeUser,
     activeUserFullname,
     activeUserAvatar,

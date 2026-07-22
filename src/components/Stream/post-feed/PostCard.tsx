@@ -1,7 +1,7 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { StreamPost, ReactionDetails } from "@/types/stream.types";
-import { selectActiveParentStream } from "@/store/selectors/streamSelectors";
+import { selectActiveParentStreamId } from "@/store/selectors/streamSelectors";
 import { useStream } from "../hooks/useStream";
 import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
@@ -35,15 +35,13 @@ export default function PostCard({
   forceCopyLinkHover,
   demoLink,
 }: Readonly<PostCardProps>) {
-  const {
-    hasLiked,
-    handleLike,
-    handleShare,
-    toggleComments,
-  } = useStream(post.stream_id, post.reaction?.my_reaction as ReactionDetails);
+  const { hasLiked, handleLike, handleShare, toggleComments } = useStream(
+    post.stream_id,
+    post.reaction?.my_reaction as ReactionDetails,
+  );
 
-  const activeParent = useSelector(selectActiveParentStream);
-  const showComments = activeParent?.stream_id === post.stream_id;
+  const activeParentId = useSelector(selectActiveParentStreamId);
+  const showComments = activeParentId === post.stream_id;
 
   const handleLikeClick = onLike || (() => handleLike(post.stream_id));
   const handleShareClick = onShare || (() => handleShare(post.stream_id));

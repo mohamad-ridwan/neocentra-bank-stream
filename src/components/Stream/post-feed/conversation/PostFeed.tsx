@@ -13,9 +13,13 @@ const PostFeed = React.memo(function PostFeed({
   onClose,
 }: Readonly<PostFeedProps>) {
   console.log("POST FEED RENDERED");
-  const { activeConversation, hasLiked, handleLike, handleShare, handleCommentClick } =
-    useStream();
-  const parent = activeConversation?.parent;
+  const {
+    activeParent: parent,
+    hasLiked,
+    handleLike,
+    handleShare,
+    handleCommentClick,
+  } = useStream();
 
   return (
     <div

@@ -5,10 +5,10 @@ import { Loader2 } from "lucide-react";
 import { ReplyPost } from "@/types/stream.types";
 import {
   selectActiveParentStream,
+  selectActiveParentStreamId,
   selectActiveReplies,
   selectConversationPagination,
 } from "@/store/selectors/streamSelectors";
-import { useStream } from "@/components/Stream/hooks/useStream";
 import PostHeader from "../../PostHeader";
 import PostContent from "../../PostContent";
 import PostActionBar from "../../PostActionBar";
@@ -61,10 +61,7 @@ const ParentPostRow = React.memo(function ParentPostRow({
   style,
   onCommentToggle,
 }: Readonly<ParentPostRowProps>) {
-  const { activeConversation } = useStream();
-  const parent = useMemo(() => {
-    return activeConversation?.parent;
-  }, [activeConversation?.parent]);
+  const parent = useSelector(selectActiveParentStream);
 
   if (!parent) return null;
 
@@ -291,13 +288,9 @@ export const ConversationReplies = React.memo(function ConversationReplies({
   scrollContainerRef,
   isLastPage: propsIsLastPage,
 }: Readonly<ConversationRepliesProps>) {
-  const activeParent = useSelector(selectActiveParentStream);
+  const parentStreamId = useSelector(selectActiveParentStreamId);
   const activeReplies = useSelector(selectActiveReplies);
   const pagination = useSelector(selectConversationPagination);
-
-  const parentStreamId = useMemo(() => {
-    return activeParent?.stream_id;
-  }, [activeParent]);
 
   const hasParent = useMemo(() => {
     return parentStreamId ?? 0;

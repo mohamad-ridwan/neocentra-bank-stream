@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDynamicRowHeight } from "react-window";
-import { ReplyPost, StreamPost } from "@/types/stream.types";
+import { ReplyPost } from "@/types/stream.types";
 import { generateMockReplies } from "@/models/stream";
 import {
   prependConversationReplies,
@@ -15,7 +15,7 @@ import {
 } from "@/store/slices/streamSlice";
 import {
   selectIsReplyAdded,
-  selectActiveParentStream,
+  selectActiveParentStreamId,
   selectActiveReplies,
   selectConversationPagination,
 } from "@/store/selectors/streamSelectors";
@@ -35,11 +35,11 @@ export function useConversationReplies({
 }: UseConversationRepliesProps) {
   const dispatch = useDispatch();
   const isReplyAdded = useSelector(selectIsReplyAdded);
-  const activeParent = useSelector(selectActiveParentStream);
+  const activeParentId = useSelector(selectActiveParentStreamId);
   const activeReplies = useSelector(selectActiveReplies);
   const pagination = useSelector(selectConversationPagination);
 
-  const parentStreamId = propsParentStreamId ?? activeParent?.stream_id ?? 0;
+  const parentStreamId = propsParentStreamId ?? activeParentId ?? 0;
   const replies = propsReplies ?? activeReplies;
   const isLastPage = propsIsLastPage ?? pagination?.is_last_page ?? false;
   // const [hasAutoScrolled, setHasAutoScrolled] = useState(false);

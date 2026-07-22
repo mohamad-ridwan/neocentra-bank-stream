@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import dynamic from "next/dynamic";
 import ConversationModalContent from "./conversation";
-import { selectActiveParentStream } from "@/store/selectors/streamSelectors";
+import { selectActiveParentStreamId } from "@/store/selectors/streamSelectors";
 
 const RemoteDialog = dynamic(
   () => import("shared_remote/Dialog").then((m) => m.Dialog),
@@ -26,11 +26,9 @@ export default function CommentsSection({
   onClose,
 }: CommentsSectionProps) {
   // The dialog is open if this section's stream ID matches the active conversation's parent ID
-  const activeParent = useSelector(selectActiveParentStream);
+  const activeParentId = useSelector(selectActiveParentStreamId);
 
-  const isOpen = useMemo(() => {
-    return activeParent?.stream_id === streamId;
-  }, [activeParent?.stream_id, streamId]);
+  const isOpen = activeParentId === streamId;
 
   return (
     <RemoteDialog

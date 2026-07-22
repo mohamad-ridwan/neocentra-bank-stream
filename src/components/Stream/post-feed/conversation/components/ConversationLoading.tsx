@@ -1,10 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import PostSkeleton from "@/components/Stream/post-feed/loaders/PostSkeleton";
-import { useStream } from "@/components/Stream/hooks/useStream";
+import { selectActiveParentStream } from "@/store/selectors/streamSelectors";
 
 export const ParentSkeleton = React.memo(function ParentSkeleton() {
-  const { activeConversation } = useStream();
-  const parent = activeConversation?.parent;
+  const parent = useSelector(selectActiveParentStream);
 
   if (!parent) return null;
 
