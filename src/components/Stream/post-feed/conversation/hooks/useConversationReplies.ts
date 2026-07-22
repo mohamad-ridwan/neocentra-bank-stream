@@ -13,23 +13,35 @@ import {
   prependConversationReplies,
   setIsReplyAdded,
 } from "@/store/slices/streamSlice";
-import { selectIsReplyAdded } from "@/store/selectors/streamSelectors";
+import {
+  selectIsReplyAdded,
+  selectActiveParentStream,
+  selectActiveReplies,
+  selectConversationPagination,
+} from "@/store/selectors/streamSelectors";
 
 interface UseConversationRepliesProps {
-  replies: ReplyPost[];
-  parentStreamId: number;
-  isLastPage: boolean;
   scrollContainerRef: React.RefObject<HTMLDivElement>;
+  replies?: ReplyPost[];
+  parentStreamId?: number;
+  isLastPage?: boolean;
 }
 
 export function useConversationReplies({
-  replies,
-  parentStreamId,
-  isLastPage,
   scrollContainerRef,
+  replies: propsReplies,
+  parentStreamId: propsParentStreamId,
+  isLastPage: propsIsLastPage,
 }: UseConversationRepliesProps) {
   const dispatch = useDispatch();
   const isReplyAdded = useSelector(selectIsReplyAdded);
+  const activeParent = useSelector(selectActiveParentStream);
+  const activeReplies = useSelector(selectActiveReplies);
+  const pagination = useSelector(selectConversationPagination);
+
+  const parentStreamId = propsParentStreamId ?? activeParent?.stream_id ?? 0;
+  const replies = propsReplies ?? activeReplies;
+  const isLastPage = propsIsLastPage ?? pagination?.is_last_page ?? false;
   // const [hasAutoScrolled, setHasAutoScrolled] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);

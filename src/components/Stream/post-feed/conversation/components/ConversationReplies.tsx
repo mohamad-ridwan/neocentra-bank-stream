@@ -1,13 +1,20 @@
 import React, { useMemo } from "react";
 import { List } from "react-window";
+import { useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
-import { ReplyPost, StreamPost } from "@/types/stream.types";
+import { ReplyPost } from "@/types/stream.types";
+import {
+  selectActiveParentStream,
+  selectActiveReplies,
+  selectConversationPagination,
+} from "@/store/selectors/streamSelectors";
+import { useStream } from "@/components/Stream/hooks/useStream";
 import PostHeader from "../../PostHeader";
 import PostContent from "../../PostContent";
 import PostActionBar from "../../PostActionBar";
 import { useConversationReplies } from "../hooks/useConversationReplies";
 import { ParentPost } from "./ParentPost";
-import PostSkeleton from "@/components/Stream/post-feed/loaders/PostSkeleton";
+import { ConversationLoading } from "./ConversationLoading";
 
 interface ReplyItemProps {
   reply: ReplyPost;
@@ -45,11 +52,123 @@ const ReplyItem = React.memo(function ReplyItem({
   );
 });
 
+interface ParentPostRowProps {
+  style: React.CSSProperties;
+  onCommentToggle: () => void;
+}
+
+const ParentPostRow = React.memo(function ParentPostRow({
+  style,
+  onCommentToggle,
+}: Readonly<ParentPostRowProps>) {
+  const { activeConversation } = useStream();
+  const parent = useMemo(() => {
+    return activeConversation?.parent;
+  }, [activeConversation?.parent]);
+
+  if (!parent) return null;
+
+  return (
+    <div style={style} className="pt-6 pb-6 pr-2">
+      <ParentPost parent={parent} onCommentClick={onCommentToggle} />
+    </div>
+  );
+});
+
+interface RepliesHeaderRowProps {
+  style: React.CSSProperties;
+  isTopPadding?: boolean;
+}
+
+const RepliesHeaderRow = React.memo(function RepliesHeaderRow({
+  style,
+  isTopPadding,
+}: Readonly<RepliesHeaderRowProps>) {
+  const replies = useSelector(selectActiveReplies);
+  const paddingClass = isTopPadding ? "pt-4 pb-2 pr-2" : "pt-6 pb-2 pr-2";
+
+  return (
+    <div style={style} className={paddingClass}>
+      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1">
+        Replies ({replies.length})
+      </h4>
+    </div>
+  );
+});
+
+interface LoadMoreRowProps {
+  style: React.CSSProperties;
+  isLoading: boolean;
+  onLoadMore: () => void;
+}
+
+const LoadMoreRow = React.memo(function LoadMoreRow({
+  style,
+  isLoading,
+  onLoadMore,
+}: Readonly<LoadMoreRowProps>) {
+  return (
+    <div style={style} className="pb-4 pr-2">
+      <button
+        onClick={onLoadMore}
+        disabled={isLoading}
+        className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-slate-900/60 border border-slate-800/40 hover:bg-slate-800/80 hover:border-slate-700 text-xs font-semibold text-slate-350 hover:text-white transition-all duration-200 cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isLoading && (
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />
+        )}
+        <span>Load Previous Conversation</span>
+      </button>
+    </div>
+  );
+});
+
+interface EmptyRepliesRowProps {
+  style: React.CSSProperties;
+}
+
+const EmptyRepliesRow = React.memo(function EmptyRepliesRow({
+  style,
+}: Readonly<EmptyRepliesRowProps>) {
+  return (
+    <div style={style} className="pt-2 pb-6 pr-2">
+      <div className="text-slate-500 text-xs py-8 text-center bg-slate-900/10 border border-dashed border-slate-800/50 rounded-2xl">
+        No replies yet. Be the first to start the conversation!
+      </div>
+    </div>
+  );
+});
+
+interface ReplyRowContainerProps {
+  style: React.CSSProperties;
+  index: number;
+  onCommentToggle: () => void;
+}
+
+const ReplyRowContainer = React.memo(function ReplyRowContainer({
+  style,
+  index,
+  onCommentToggle,
+}: Readonly<ReplyRowContainerProps>) {
+  const replies = useSelector(selectActiveReplies);
+
+  const reply = useMemo(() => {
+    return replies[replies.length - 1 - index];
+  }, [replies, index]);
+
+  if (!reply) return null;
+
+  return (
+    <div style={style} className="pb-3 pr-2">
+      <ReplyItem reply={reply} onCommentToggle={onCommentToggle} />
+    </div>
+  );
+});
+
 interface RowProps {
   index: number;
   style: React.CSSProperties;
-  parent: StreamPost | null;
-  replies: ReplyPost[];
+  hasParent: boolean;
   isLoading: boolean;
   onCommentToggle: () => void;
   showLoadMore: boolean;
@@ -60,8 +179,7 @@ interface RowProps {
 const Row = React.memo(function Row({
   index,
   style,
-  parent,
-  replies,
+  hasParent,
   isLoading,
   onCommentToggle,
   showLoadMore,
@@ -76,131 +194,85 @@ const Row = React.memo(function Row({
     [style],
   );
 
-  if (parent) {
+  if (hasParent) {
     if (index === rowCount - 1) {
       return (
-        <div style={rowStyle} className="pt-6 pb-6 pr-2">
-          <ParentPost parent={parent} onCommentClick={onCommentToggle} />
-        </div>
+        <ParentPostRow style={rowStyle} onCommentToggle={onCommentToggle} />
       );
     }
 
     if (index === rowCount - 2) {
-      return (
-        <div style={rowStyle} className="pt-6 pb-2 pr-2">
-          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1">
-            Replies ({replies.length})
-          </h4>
-        </div>
-      );
+      return <RepliesHeaderRow style={rowStyle} isTopPadding={false} />;
     }
 
     if (showLoadMore) {
       if (index === rowCount - 3) {
         return (
-          <div style={rowStyle} className="pb-4 pr-2">
-            <button
-              onClick={onLoadMore}
-              disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-slate-900/60 border border-slate-800/40 hover:bg-slate-800/80 hover:border-slate-700 text-xs font-semibold text-slate-350 hover:text-white transition-all duration-200 cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading && (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />
-              )}
-              <span>Load Previous Conversation</span>
-            </button>
-          </div>
+          <LoadMoreRow
+            style={rowStyle}
+            isLoading={isLoading}
+            onLoadMore={onLoadMore}
+          />
         );
       }
 
-      const reply = replies[replies.length - 1 - index];
-      if (!reply) return null;
       return (
-        <div style={rowStyle} className="pb-3 pr-2">
-          <ReplyItem reply={reply} onCommentToggle={onCommentToggle} />
-        </div>
+        <ReplyRowContainer
+          style={rowStyle}
+          index={index}
+          onCommentToggle={onCommentToggle}
+        />
       );
     } else {
       // showLoadMore is false
-      if (replies.length === 0) {
-        if (index === rowCount - 3) {
-          return (
-            <div style={rowStyle} className="pt-2 pb-6 pr-2">
-              <div className="text-slate-500 text-xs py-8 text-center bg-slate-900/10 border border-dashed border-slate-800/50 rounded-2xl">
-                No replies yet. Be the first to start the conversation!
-              </div>
-            </div>
-          );
-        }
-        return null;
+      if (index === rowCount - 3 && rowCount === 3) {
+        return <EmptyRepliesRow style={rowStyle} />;
       }
 
-      const reply = replies[replies.length - 1 - index];
-      if (!reply) return null;
       return (
-        <div style={rowStyle} className="pb-3 pr-2">
-          <ReplyItem reply={reply} onCommentToggle={onCommentToggle} />
-        </div>
+        <ReplyRowContainer
+          style={rowStyle}
+          index={index}
+          onCommentToggle={onCommentToggle}
+        />
       );
     }
   } else {
     // No parent
     if (index === rowCount - 1) {
-      return (
-        <div style={rowStyle} className="pt-4 pb-2 pr-2">
-          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1">
-            Replies ({replies.length})
-          </h4>
-        </div>
-      );
+      return <RepliesHeaderRow style={rowStyle} isTopPadding={true} />;
     }
 
     if (showLoadMore) {
       if (index === rowCount - 2) {
         return (
-          <div style={rowStyle} className="pb-4 pr-2">
-            <button
-              onClick={onLoadMore}
-              disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-slate-900/60 border border-slate-800/40 hover:bg-slate-800/80 hover:border-slate-700 text-xs font-semibold text-slate-350 hover:text-white transition-all duration-200 cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading && (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />
-              )}
-              <span>Load Previous Conversation</span>
-            </button>
-          </div>
+          <LoadMoreRow
+            style={rowStyle}
+            isLoading={isLoading}
+            onLoadMore={onLoadMore}
+          />
         );
       }
 
-      const reply = replies[replies.length - 1 - index];
-      if (!reply) return null;
       return (
-        <div style={rowStyle} className="pb-3 pr-2">
-          <ReplyItem reply={reply} onCommentToggle={onCommentToggle} />
-        </div>
+        <ReplyRowContainer
+          style={rowStyle}
+          index={index}
+          onCommentToggle={onCommentToggle}
+        />
       );
     } else {
       // showLoadMore is false
-      if (replies.length === 0) {
-        if (index === rowCount - 2) {
-          return (
-            <div style={rowStyle} className="pt-2 pb-6 pr-2">
-              <div className="text-slate-500 text-xs py-8 text-center bg-slate-900/10 border border-dashed border-slate-800/50 rounded-2xl">
-                No replies yet. Be the first to start the conversation!
-              </div>
-            </div>
-          );
-        }
-        return null;
+      if (index === rowCount - 2 && rowCount === 2) {
+        return <EmptyRepliesRow style={rowStyle} />;
       }
 
-      const reply = replies[replies.length - 1 - index];
-      if (!reply) return null;
       return (
-        <div style={rowStyle} className="pb-3 pr-2">
-          <ReplyItem reply={reply} onCommentToggle={onCommentToggle} />
-        </div>
+        <ReplyRowContainer
+          style={rowStyle}
+          index={index}
+          onCommentToggle={onCommentToggle}
+        />
       );
     }
   }
@@ -209,22 +281,35 @@ const Row = React.memo(function Row({
 Row.displayName = "ConversationReplyRow";
 
 interface ConversationRepliesProps {
-  parent: StreamPost | null;
-  parentStreamId: number;
-  replies: ReplyPost[];
   onCommentToggle: () => void;
-  isLastPage: boolean;
   scrollContainerRef: React.RefObject<HTMLDivElement>;
+  isLastPage?: boolean;
 }
 
 export const ConversationReplies = React.memo(function ConversationReplies({
-  parent,
-  parentStreamId,
-  replies,
   onCommentToggle,
-  isLastPage,
   scrollContainerRef,
+  isLastPage: propsIsLastPage,
 }: Readonly<ConversationRepliesProps>) {
+  const activeParent = useSelector(selectActiveParentStream);
+  const activeReplies = useSelector(selectActiveReplies);
+  const pagination = useSelector(selectConversationPagination);
+
+  const parentStreamId = useMemo(() => {
+    return activeParent?.stream_id;
+  }, [activeParent]);
+
+  const hasParent = useMemo(() => {
+    return parentStreamId ?? 0;
+  }, [parentStreamId]);
+  const repliesCount = useMemo(() => {
+    return activeReplies?.length ?? 0;
+  }, [activeReplies]);
+
+  const isLastPage = useMemo(() => {
+    return pagination?.is_last_page ?? false;
+  }, [pagination?.is_last_page, propsIsLastPage]);
+
   const {
     viewportHeight,
     wrapperRef,
@@ -235,7 +320,7 @@ export const ConversationReplies = React.memo(function ConversationReplies({
     loadMore,
     isReady,
   } = useConversationReplies({
-    replies,
+    replies: activeReplies,
     parentStreamId,
     isLastPage,
     scrollContainerRef,
@@ -245,28 +330,23 @@ export const ConversationReplies = React.memo(function ConversationReplies({
     return isLastPage;
   }, [isLastPage]);
 
-  let rowCount = 0;
-  if (parent) {
-    rowCount += 2; // ParentPost + Header
-    if (showLoadMore) {
-      rowCount += 1; // Button row
-    }
-    if (replies.length === 0 && !showLoadMore) {
-      rowCount += 1; // Empty state helper
+  const rowCount = useMemo(() => {
+    let count = 0;
+    if (hasParent) {
+      count += 2; // ParentPost + Header
     } else {
-      rowCount += replies.length;
+      count += 1; // Header
     }
-  } else {
-    rowCount += 1; // Header
     if (showLoadMore) {
-      rowCount += 1; // Button row
+      count += 1; // Button row
     }
-    if (replies.length === 0 && !showLoadMore) {
-      rowCount += 1; // Empty state helper
+    if (repliesCount === 0 && !showLoadMore) {
+      count += 1; // Empty state helper
     } else {
-      rowCount += replies.length;
+      count += repliesCount;
     }
-  }
+    return count;
+  }, [hasParent, showLoadMore, repliesCount]);
 
   return (
     <div
@@ -282,25 +362,7 @@ export const ConversationReplies = React.memo(function ConversationReplies({
           overflow: "hidden",
         }}
       >
-        <div
-          className={`absolute inset-0 bg-slate-950 z-30 pt-16 pr-2 space-y-6 transition-opacity duration-300 ${
-            isReady ? "opacity-0 pointer-events-none" : "opacity-100"
-          }`}
-          style={{ transform: "scaleY(-1)" }}
-        >
-          {parent && (
-            <div className="pb-6 border-b border-slate-800/40">
-              <PostSkeleton size="md" />
-            </div>
-          )}
-          <div className="pt-2">
-            <div className="h-4 bg-slate-800/40 rounded-md w-28 mb-4 animate-pulse" />
-            <div className="space-y-4">
-              <PostSkeleton size="xs" />
-              <PostSkeleton size="xs" />
-            </div>
-          </div>
-        </div>
+        <ConversationLoading isReady={isReady} />
         <div
           className={`w-full h-full transition-opacity duration-300 ${
             isReady ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -312,8 +374,7 @@ export const ConversationReplies = React.memo(function ConversationReplies({
             rowHeight={rowHeight}
             rowComponent={Row as any}
             rowProps={{
-              parent,
-              replies,
+              hasParent,
               isLoading,
               onCommentToggle,
               showLoadMore,
@@ -326,7 +387,6 @@ export const ConversationReplies = React.memo(function ConversationReplies({
               width: "100%",
               overflow: "hidden",
               overflowAnchor: "none",
-              // transform: "scaleY(-1)",
             }}
             overscanCount={5}
           />
