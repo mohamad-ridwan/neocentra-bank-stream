@@ -35,17 +35,20 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
     toast.success(msg);
   };
 
-  const effectiveStreamId = streamId ?? activeParentId;
-  const effectiveMyReaction = myReaction ?? activeParentReaction;
-
   const memoizedStreamId = React.useMemo(
-    () => effectiveStreamId,
-    [effectiveStreamId],
+    () => streamId ?? activeParentId,
+    [streamId, activeParentId],
   );
 
   const hasLiked = React.useMemo(() => {
-    return !!effectiveMyReaction;
-  }, [effectiveMyReaction]);
+    if (myReaction !== undefined) {
+      if (myReaction !== null && typeof myReaction === "object") {
+        return true;
+      }
+      return false;
+    }
+    return !!activeParentReaction;
+  }, [myReaction, activeParentReaction]);
 
   const handleLike = useCallback(
     (streamIdOrEvent?: number | React.MouseEvent) => {
@@ -91,7 +94,6 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
     },
     [dispatch, memoizedStreamId, activeParentId],
   );
-
 
   const handleAddComment = useCallback(
     (streamIdOrText?: number | string | React.MouseEvent, text?: string) => {
@@ -179,4 +181,3 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
     inputRef,
   };
 }
-

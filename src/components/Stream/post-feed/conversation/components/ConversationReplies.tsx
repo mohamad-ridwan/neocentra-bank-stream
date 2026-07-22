@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { List } from "react-window";
 import { useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
