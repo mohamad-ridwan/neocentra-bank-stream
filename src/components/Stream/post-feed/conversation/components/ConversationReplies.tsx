@@ -21,40 +21,40 @@ interface ReplyItemProps {
   onCommentToggle: () => void;
 }
 
-const ReplyItem = React.memo(function ReplyItem({
-  reply,
-  onCommentToggle,
-}: Readonly<ReplyItemProps>) {
-  const hasReplyLiked = !!reply.reaction.my_reaction;
-
-  useEffect(() => {
-    console.log("render reply item");
-  }, []);
-  return (
-    <div className="bg-slate-900/30 border border-slate-800/40 hover:border-slate-800/80 rounded-2xl p-4 transition-all duration-200">
-      <PostHeader post={reply} size="xs" hideMenu={true} />
-      <PostContent
-        content={reply.content_original}
-        size="xs"
-        className="pl-8"
-      />
-      <div className="pl-8 mt-2">
-        <PostActionBar
-          post={reply}
-          hasLiked={hasReplyLiked}
-          onLike={() => {
-            console.log("Like reply:", reply.stream_id);
-          }}
-          onCommentToggle={onCommentToggle}
-          onShare={() => {
-            console.log("Share reply:", reply.stream_id);
-          }}
+const ReplyItem = React.memo(
+  function ReplyItem({ reply, onCommentToggle }: Readonly<ReplyItemProps>) {
+    const hasReplyLiked = !!reply.reaction.my_reaction;
+    return (
+      <div className="bg-slate-900/30 border border-slate-800/40 hover:border-slate-800/80 rounded-2xl p-4 transition-all duration-200">
+        <PostHeader post={reply} size="xs" hideMenu={true} />
+        <PostContent
+          content={reply.content_original}
           size="xs"
+          className="pl-8"
         />
+        <div className="pl-8 mt-2">
+          <PostActionBar
+            post={reply}
+            hasLiked={hasReplyLiked}
+            onLike={() => {
+              console.log("Like reply:", reply.stream_id);
+            }}
+            onCommentToggle={onCommentToggle}
+            onShare={() => {
+              console.log("Share reply:", reply.stream_id);
+            }}
+            size="xs"
+          />
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+  (prev, next) => {
+    return (
+      prev.reply?.reaction?.my_reaction === next.reply?.reaction?.my_reaction
+    );
+  },
+);
 
 interface ParentPostRowProps {
   style: React.CSSProperties;
@@ -286,107 +286,112 @@ interface ConversationRepliesProps {
   scrollContainerRef: React.RefObject<HTMLDivElement>;
 }
 
-export const ConversationReplies = React.memo(function ConversationReplies({
-  onCommentToggle,
-  scrollContainerRef,
-}: Readonly<ConversationRepliesProps>) {
-  const parentStreamId = useSelector(selectActiveParentStreamId);
-  const activeReplies = useSelector(selectActiveReplies);
-  const pagination = useSelector(selectConversationPagination);
-
-  const hasParent = useMemo(() => {
-    return parentStreamId ?? 0;
-  }, [parentStreamId]);
-  const repliesCount = useMemo(() => {
-    return activeReplies?.length ?? 0;
-  }, [activeReplies]);
-
-  const isLastPage = useMemo(() => {
-    return pagination?.is_last_page ?? false;
-  }, [pagination?.is_last_page]);
-
-  const {
-    viewportHeight,
-    wrapperRef,
-    listRef,
-    rowHeight,
-    wrapperHeight,
-    isLoading,
-    loadMore,
-    isReady,
-  } = useConversationReplies({
-    replies: activeReplies,
-    parentStreamId,
-    isLastPage,
+export const ConversationReplies = React.memo(
+  function ConversationReplies({
+    onCommentToggle,
     scrollContainerRef,
-  });
+  }: Readonly<ConversationRepliesProps>) {
+    const parentStreamId = useSelector(selectActiveParentStreamId);
+    const activeReplies = useSelector(selectActiveReplies);
+    const pagination = useSelector(selectConversationPagination);
 
-  const showLoadMore = useMemo(() => {
-    return isLastPage;
-  }, [isLastPage]);
+    const hasParent = useMemo(() => {
+      return parentStreamId ?? 0;
+    }, [parentStreamId]);
+    const repliesCount = useMemo(() => {
+      return activeReplies?.length ?? 0;
+    }, [activeReplies]);
 
-  const rowCount = useMemo(() => {
-    let count = 0;
-    if (hasParent) {
-      count += 2; // ParentPost + Header
-    } else {
-      count += 1; // Header
-    }
-    if (showLoadMore) {
-      count += 1; // Button row
-    }
-    if (repliesCount === 0 && !showLoadMore) {
-      count += 1; // Empty state helper
-    } else {
-      count += repliesCount;
-    }
-    return count;
-  }, [hasParent, showLoadMore, repliesCount]);
+    const isLastPage = useMemo(() => {
+      return pagination?.is_last_page ?? false;
+    }, [pagination?.is_last_page]);
 
-  return (
-    <div
-      ref={wrapperRef}
-      style={{ position: "relative", height: wrapperHeight, width: "100%" }}
-    >
+    const {
+      viewportHeight,
+      wrapperRef,
+      listRef,
+      rowHeight,
+      wrapperHeight,
+      isLoading,
+      loadMore,
+      isReady,
+    } = useConversationReplies({
+      replies: activeReplies,
+      parentStreamId,
+      isLastPage,
+      scrollContainerRef,
+    });
+
+    const showLoadMore = useMemo(() => {
+      return isLastPage;
+    }, [isLastPage]);
+
+    const rowCount = useMemo(() => {
+      let count = 0;
+      if (hasParent) {
+        count += 2; // ParentPost + Header
+      } else {
+        count += 1; // Header
+      }
+      if (showLoadMore) {
+        count += 1; // Button row
+      }
+      if (repliesCount === 0 && !showLoadMore) {
+        count += 1; // Empty state helper
+      } else {
+        count += repliesCount;
+      }
+      return count;
+    }, [hasParent, showLoadMore, repliesCount]);
+
+    return (
       <div
-        style={{
-          position: "sticky",
-          top: 0,
-          height: viewportHeight,
-          width: "100%",
-          overflow: "hidden",
-        }}
+        ref={wrapperRef}
+        style={{ position: "relative", height: wrapperHeight, width: "100%" }}
       >
-        <ConversationLoading isReady={isReady} />
         <div
-          className={`w-full h-full transition-opacity duration-300 ${
-            isReady ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+          style={{
+            position: "sticky",
+            top: 0,
+            height: viewportHeight,
+            width: "100%",
+            overflow: "hidden",
+          }}
         >
-          <List
-            listRef={listRef}
-            rowCount={rowCount}
-            rowHeight={rowHeight}
-            rowComponent={Row as any}
-            rowProps={{
-              hasParent,
-              isLoading,
-              onCommentToggle,
-              showLoadMore,
-              onLoadMore: loadMore,
-              rowCount,
-            }}
-            className="scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
-            style={{
-              height: "100%",
-              width: "100%",
-              overflow: "hidden",
-              overflowAnchor: "none",
-            }}
-            overscanCount={5}
-          />
+          <ConversationLoading isReady={isReady} />
+          <div
+            className={`w-full h-full transition-opacity duration-300 ${
+              isReady ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+          >
+            <List
+              listRef={listRef}
+              rowCount={rowCount}
+              rowHeight={rowHeight}
+              rowComponent={Row as any}
+              rowProps={{
+                hasParent,
+                isLoading,
+                onCommentToggle,
+                showLoadMore,
+                onLoadMore: loadMore,
+                rowCount,
+              }}
+              className="scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
+              style={{
+                height: "100%",
+                width: "100%",
+                overflow: "hidden",
+                overflowAnchor: "none",
+              }}
+              overscanCount={5}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+  (prev, next) => {
+    return prev.scrollContainerRef.current === next.scrollContainerRef.current;
+  },
+);
