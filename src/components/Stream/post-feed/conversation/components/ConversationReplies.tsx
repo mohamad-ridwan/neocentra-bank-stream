@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { List } from "react-window";
 import { useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
@@ -26,6 +26,10 @@ const ReplyItem = React.memo(function ReplyItem({
   onCommentToggle,
 }: Readonly<ReplyItemProps>) {
   const hasReplyLiked = !!reply.reaction.my_reaction;
+
+  useEffect(() => {
+    console.log("render reply item");
+  }, []);
   return (
     <div className="bg-slate-900/30 border border-slate-800/40 hover:border-slate-800/80 rounded-2xl p-4 transition-all duration-200">
       <PostHeader post={reply} size="xs" hideMenu={true} />
@@ -280,13 +284,11 @@ Row.displayName = "ConversationReplyRow";
 interface ConversationRepliesProps {
   onCommentToggle: () => void;
   scrollContainerRef: React.RefObject<HTMLDivElement>;
-  isLastPage?: boolean;
 }
 
 export const ConversationReplies = React.memo(function ConversationReplies({
   onCommentToggle,
   scrollContainerRef,
-  isLastPage: propsIsLastPage,
 }: Readonly<ConversationRepliesProps>) {
   const parentStreamId = useSelector(selectActiveParentStreamId);
   const activeReplies = useSelector(selectActiveReplies);
@@ -301,7 +303,7 @@ export const ConversationReplies = React.memo(function ConversationReplies({
 
   const isLastPage = useMemo(() => {
     return pagination?.is_last_page ?? false;
-  }, [pagination?.is_last_page, propsIsLastPage]);
+  }, [pagination?.is_last_page]);
 
   const {
     viewportHeight,
