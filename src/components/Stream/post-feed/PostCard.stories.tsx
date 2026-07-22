@@ -57,15 +57,11 @@ export const Default: Story = {
     post: mockPost,
     activeConversation: null,
     showComments: false,
-    commentText: "",
     onLike: () => console.log("Like clicked"),
     onShare: () => console.log("Share clicked"),
     onCommentToggle: () => console.log("Comment Toggle clicked"),
-    onCommentTextChange: (text: string) =>
-      console.log("Comment text changed:", text),
-    onAddComment: (e: React.FormEvent) => {
-      e.preventDefault();
-      console.log("Add comment form submitted");
+    onAddComment: (text: string) => {
+      console.log("Add comment submitted:", text);
     },
   },
 };
@@ -149,15 +145,11 @@ export const Expanded: StoryObj<
     post: mockPost,
     activeConversation: null,
     showComments: false,
-    commentText: "",
     onLike: () => console.log("Like clicked"),
     onShare: () => console.log("Share clicked"),
     onCommentToggle: () => console.log("Comment Toggle clicked"),
-    onCommentTextChange: (text: string) =>
-      console.log("Comment text changed:", text),
-    onAddComment: (e: React.FormEvent) => {
-      e.preventDefault();
-      console.log("Add comment form submitted");
+    onAddComment: (text: string) => {
+      console.log("Add comment submitted:", text);
     },
     hasAccountVerified: true,
     hoverVerifiedAccount: false,

@@ -1,24 +1,24 @@
 import React from "react";
-import { StreamPost } from "@/types/stream.types";
+import { StreamPost, ReactionDetails } from "@/types/stream.types";
 import PostHeader from "../../PostHeader";
 import PostContent from "../../PostContent";
 import PostActionBar from "../../PostActionBar";
+import { useStream } from "../../../hooks/useStream";
 
 interface ParentPostProps {
   parent: StreamPost | null;
-  hasLiked: boolean;
-  onLike: () => void;
-  onShare: () => void;
-  onCommentClick: () => void;
+  onCommentClick?: () => void;
 }
 
 export const ParentPost = React.memo(function ParentPost({
   parent,
-  hasLiked,
-  onLike,
-  onShare,
   onCommentClick,
 }: Readonly<ParentPostProps>) {
+  const { hasLiked, handleLike, handleShare, handleCommentClick } = useStream(
+    parent?.stream_id,
+    parent?.reaction?.my_reaction as ReactionDetails,
+  );
+
   if (!parent) return null;
 
   return (
@@ -33,9 +33,9 @@ export const ParentPost = React.memo(function ParentPost({
         <PostActionBar
           post={parent}
           hasLiked={hasLiked}
-          onLike={onLike}
-          onCommentToggle={onCommentClick}
-          onShare={onShare}
+          onLike={handleLike as any}
+          onCommentToggle={onCommentClick || handleCommentClick}
+          onShare={handleShare as any}
         />
       </div>
     </div>

@@ -1,28 +1,26 @@
 import React from "react";
-import { StreamPost } from "@/types/stream.types";
+import { StreamPost, ReactionDetails } from "@/types/stream.types";
 import { X } from "lucide-react";
 import PostHeader from "../PostHeader";
 import PostContent from "../PostContent";
 import PostActionBar from "../PostActionBar";
+import { useStream } from "../../hooks/useStream";
 
 interface PostFeedProps {
   parent: StreamPost | null;
   onClose: () => void;
-  hasLiked: boolean;
-  onLike: () => void;
-  onShare: () => void;
-  onCommentClick: () => void;
 }
 
 const PostFeed = React.memo(function PostFeed({
   parent,
   onClose,
-  hasLiked,
-  onLike,
-  onShare,
-  onCommentClick,
 }: Readonly<PostFeedProps>) {
   console.log("POST FEED RENDERED");
+  const { hasLiked, handleLike, handleShare, handleCommentClick } = useStream(
+    parent?.stream_id,
+    parent?.reaction?.my_reaction as ReactionDetails,
+  );
+
   return (
     <div
       className="hidden md:flex flex-col justify-center items-start p-12 md:pl-32 flex-1 h-full relative"
@@ -57,9 +55,9 @@ const PostFeed = React.memo(function PostFeed({
           <PostActionBar
             post={parent}
             hasLiked={hasLiked}
-            onLike={onLike}
-            onCommentToggle={onCommentClick}
-            onShare={onShare}
+            onLike={handleLike as any}
+            onCommentToggle={handleCommentClick}
+            onShare={handleShare as any}
           />
         </div>
       ) : (

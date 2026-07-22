@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { List } from "react-window";
 import { Loader2 } from "lucide-react";
 import { ReplyPost, StreamPost } from "@/types/stream.types";
@@ -49,9 +49,6 @@ interface RowProps {
   index: number;
   style: React.CSSProperties;
   parent: StreamPost | null;
-  parentHasLiked: boolean;
-  onParentLike: () => void;
-  onParentShare: () => void;
   replies: ReplyPost[];
   isLoading: boolean;
   onCommentToggle: () => void;
@@ -64,9 +61,6 @@ const Row = React.memo(function Row({
   index,
   style,
   parent,
-  parentHasLiked,
-  onParentLike,
-  onParentShare,
   replies,
   isLoading,
   onCommentToggle,
@@ -86,13 +80,7 @@ const Row = React.memo(function Row({
     if (index === rowCount - 1) {
       return (
         <div style={rowStyle} className="pt-6 pb-6 pr-2">
-          <ParentPost
-            parent={parent}
-            hasLiked={parentHasLiked}
-            onLike={onParentLike}
-            onShare={onParentShare}
-            onCommentClick={onCommentToggle}
-          />
+          <ParentPost parent={parent} onCommentClick={onCommentToggle} />
         </div>
       );
     }
@@ -222,9 +210,6 @@ Row.displayName = "ConversationReplyRow";
 
 interface ConversationRepliesProps {
   parent: StreamPost | null;
-  hasLiked: boolean;
-  onLike: () => void;
-  onShare: () => void;
   parentStreamId: number;
   replies: ReplyPost[];
   onCommentToggle: () => void;
@@ -234,9 +219,6 @@ interface ConversationRepliesProps {
 
 export const ConversationReplies = React.memo(function ConversationReplies({
   parent,
-  hasLiked,
-  onLike,
-  onShare,
   parentStreamId,
   replies,
   onCommentToggle,
@@ -259,7 +241,9 @@ export const ConversationReplies = React.memo(function ConversationReplies({
     scrollContainerRef,
   });
 
-  const showLoadMore = isLastPage;
+  const showLoadMore = useMemo(() => {
+    return isLastPage;
+  }, [isLastPage]);
 
   let rowCount = 0;
   if (parent) {
@@ -329,9 +313,6 @@ export const ConversationReplies = React.memo(function ConversationReplies({
             rowComponent={Row as any}
             rowProps={{
               parent,
-              parentHasLiked: hasLiked,
-              onParentLike: onLike,
-              onParentShare: onShare,
               replies,
               isLoading,
               onCommentToggle,

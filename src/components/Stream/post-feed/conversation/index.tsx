@@ -15,36 +15,19 @@ export default function ConversationModalContent({
   replies,
   onClose,
 }: Readonly<ConversationModalContentProps>) {
-  const {
-    hasLiked,
-    handleLike,
-    handleShare,
-    handleAddComment,
-    handleCommentClick,
-    inputRef,
-  } = useStream(
+  const { handleAddComment, inputRef } = useStream(
     parent?.stream_id,
     parent?.reaction?.my_reaction as ReactionDetails,
   );
 
   return (
     <div className="flex flex-col md:flex-row h-full w-full bg-transparent text-slate-100 overflow-hidden">
-      <PostFeed
-        parent={parent}
-        onClose={onClose}
-        hasLiked={hasLiked}
-        onLike={handleLike as any}
-        onShare={handleShare as any}
-        onCommentClick={handleCommentClick}
-      />
+      <PostFeed parent={parent} onClose={onClose} />
       <Conversation
         parent={parent}
         replies={replies}
         onAddComment={handleAddComment as any}
         onClose={onClose}
-        hasLiked={hasLiked}
-        onLike={handleLike as any}
-        onShare={handleShare as any}
         inputRef={inputRef}
       />
     </div>

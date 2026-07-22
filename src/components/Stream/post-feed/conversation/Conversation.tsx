@@ -11,9 +11,6 @@ interface ConversationProps {
   replies: ReplyPost[];
   onAddComment: (text: string) => void;
   onClose: () => void;
-  hasLiked: boolean;
-  onLike: () => void;
-  onShare: () => void;
   inputRef?: React.RefObject<HTMLInputElement>;
 }
 
@@ -22,9 +19,6 @@ const Conversation = React.memo(function Conversation({
   replies,
   onAddComment,
   onClose,
-  hasLiked,
-  onLike,
-  onShare,
   inputRef,
 }: Readonly<ConversationProps>) {
   const localInputRef = React.useRef<HTMLInputElement>(null);
@@ -66,9 +60,6 @@ const Conversation = React.memo(function Conversation({
         {/* List replies (incorporating parent post virtualized) */}
         <ConversationReplies
           parent={parent}
-          hasLiked={hasLiked}
-          onLike={onLike}
-          onShare={onShare}
           parentStreamId={parentStreamId}
           replies={replies}
           onCommentToggle={handleCommentClick}
