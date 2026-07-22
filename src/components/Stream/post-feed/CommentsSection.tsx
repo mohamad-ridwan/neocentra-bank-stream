@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import dynamic from "next/dynamic";
 import ConversationModalContent from "./conversation";
@@ -28,7 +28,9 @@ export default function CommentsSection({
   // The dialog is open if this section's stream ID matches the active conversation's parent ID
   const activeParentId = useSelector(selectActiveParentStreamId);
 
-  const isOpen = activeParentId === streamId;
+  const isOpen = useMemo(() => {
+    return activeParentId === streamId;
+  }, [activeParentId, streamId]);
 
   return (
     <RemoteDialog

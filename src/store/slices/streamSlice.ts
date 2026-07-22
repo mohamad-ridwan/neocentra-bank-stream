@@ -9,7 +9,9 @@ import {
   appendStreamsReducer,
   prependConversationRepliesReducer,
   setIsReplyAddedReducer,
+  closeConversationReducer,
 } from "../reducers/streamReducers";
+
 
 const initialState: StreamState = {
   streams: {
@@ -46,6 +48,7 @@ export const streamSlice = createSlice({
     appendStreams: appendStreamsReducer,
     prependConversationReplies: prependConversationRepliesReducer,
     setIsReplyAdded: setIsReplyAddedReducer,
+    closeConversation: closeConversationReducer,
   },
 });
 
@@ -57,5 +60,7 @@ export const {
   appendStreams,
   prependConversationReplies,
   setIsReplyAdded,
+  closeConversation,
 } = streamSlice.actions;
+
 export default streamSlice.reducer;

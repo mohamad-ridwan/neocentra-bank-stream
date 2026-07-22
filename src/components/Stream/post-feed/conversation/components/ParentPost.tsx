@@ -23,7 +23,7 @@ export const ParentPost = React.memo(function ParentPost({
 
   return (
     <div className="pb-6 border-b border-slate-800/60">
-      <PostHeader post={parent} size="sm" hideMenu={true} />
+      <PostHeader post={parent} size="sm" />
       <PostContent
         content={parent.content_original}
         size="sm"

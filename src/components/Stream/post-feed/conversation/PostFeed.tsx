@@ -46,7 +46,7 @@ const PostFeed = React.memo(function PostFeed({
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <PostHeader post={parent} size="lg" hideMenu={true} />
+          <PostHeader post={parent} size="lg" />
 
           {/* Content */}
           <PostContent content={parent.content_original} size="lg" />

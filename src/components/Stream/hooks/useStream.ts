@@ -12,6 +12,7 @@ import {
   incrementShare,
   loadConversation,
   addReply,
+  closeConversation,
 } from "@/store/slices/streamSlice";
 import { ReactionDetails } from "@/types/stream.types";
 
@@ -154,6 +155,10 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
     [],
   );
 
+  const handleCloseConversation = useCallback(() => {
+    dispatch(closeConversation());
+  }, [dispatch]);
+
   const handleCommentClick = React.useCallback(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -173,8 +178,10 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
     toggleComments,
     handleAddComment,
     handleCopyLink,
+    handleCloseConversation,
     hasLiked,
     handleCommentClick,
     inputRef,
   };
 }
+

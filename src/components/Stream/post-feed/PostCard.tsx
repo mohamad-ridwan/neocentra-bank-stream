@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { StreamPost, ReactionDetails } from "@/types/stream.types";
 import { selectActiveParentStreamId } from "@/store/selectors/streamSelectors";
@@ -35,13 +35,18 @@ export default function PostCard({
   forceCopyLinkHover,
   demoLink,
 }: Readonly<PostCardProps>) {
-  const { hasLiked, handleLike, handleShare, toggleComments } = useStream(
-    post.stream_id,
-    post.reaction?.my_reaction as ReactionDetails,
-  );
+  const {
+    hasLiked,
+    handleLike,
+    handleShare,
+    toggleComments,
+    handleCloseConversation,
+  } = useStream(post.stream_id, post.reaction?.my_reaction as ReactionDetails);
 
   const activeParentId = useSelector(selectActiveParentStreamId);
-  const showComments = activeParentId === post.stream_id;
+  const showComments = useMemo(() => {
+    return activeParentId === post.stream_id;
+  }, [activeParentId, post?.stream_id]);
 
   const handleLikeClick = onLike || (() => handleLike(post.stream_id));
   const handleShareClick = onShare || (() => handleShare(post.stream_id));
@@ -71,7 +76,7 @@ export default function PostCard({
         <CommentsSection
           streamId={post.stream_id}
           commentsCount={post.total_replies}
-          onClose={handleCommentToggleClick}
+          onClose={handleCloseConversation}
         />
       )}
     </div>
