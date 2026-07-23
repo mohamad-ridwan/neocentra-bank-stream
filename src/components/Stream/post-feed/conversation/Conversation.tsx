@@ -5,18 +5,16 @@ import { CommentInput } from "./components/CommentInput";
 import { useStream } from "../../hooks/useStream";
 
 interface ConversationProps {
-  onClose: () => void;
   inputRef: React.RefObject<HTMLInputElement>;
   handleCommentClick: () => void;
 }
 
 const Conversation = React.memo(
   function Conversation({
-    onClose,
     inputRef,
     handleCommentClick,
   }: Readonly<ConversationProps>) {
-    const { handleAddComment } = useStream();
+    const { handleAddComment, handleCloseConversation } = useStream();
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
     return (
@@ -24,7 +22,7 @@ const Conversation = React.memo(
         {/* Close Button for mobile screens only */}
         <div className="absolute top-4 right-4 z-20 md:hidden">
           <button
-            onClick={onClose}
+            onClick={handleCloseConversation}
             className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-all duration-200 cursor-pointer shadow-lg active:scale-95"
             aria-label="Close modal"
           >

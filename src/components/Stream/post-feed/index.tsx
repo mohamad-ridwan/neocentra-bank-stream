@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { List } from "react-window";
 import { useSelector } from "react-redux";
 import { selectStreamsList } from "@/store/selectors/streamSelectors";
@@ -20,7 +20,9 @@ const Row = React.memo(
     index: number;
     style: React.CSSProperties;
   } & RowProps) => {
-    const post = posts[index];
+    const post = useMemo(() => {
+      return posts[index];
+    }, [posts, index]);
     if (!post) {
       return (
         <div style={style} className="pb-3">

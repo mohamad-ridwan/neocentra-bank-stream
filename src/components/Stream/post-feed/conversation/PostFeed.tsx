@@ -6,12 +6,10 @@ import PostActionBar from "../PostActionBar";
 import { useStream } from "../../hooks/useStream";
 
 interface PostFeedProps {
-  onClose: () => void;
   handleCommentClick: () => void;
 }
 
 const PostFeed = React.memo(function PostFeed({
-  onClose,
   handleCommentClick,
 }: Readonly<PostFeedProps>) {
   console.log("POST FEED RENDERED");
@@ -20,12 +18,13 @@ const PostFeed = React.memo(function PostFeed({
     hasLiked,
     handleLike,
     handleShare,
+    handleCloseConversation,
   } = useStream();
 
   return (
     <div
       className="hidden md:flex flex-col justify-center items-start p-12 md:pl-32 flex-1 h-full relative"
-      onClick={onClose}
+      onClick={handleCloseConversation}
     >
       {/* Close Button positioned at the top-right of the left panel */}
       <div
@@ -33,7 +32,7 @@ const PostFeed = React.memo(function PostFeed({
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          onClick={onClose}
+          onClick={handleCloseConversation}
           className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-all duration-200 cursor-pointer shadow-lg active:scale-95"
           aria-label="Close modal"
         >

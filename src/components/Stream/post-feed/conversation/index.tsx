@@ -1,24 +1,23 @@
-import React from "react";
+import React, { memo } from "react";
 import PostFeed from "./PostFeed";
 import Conversation from "./Conversation";
 import { useStream } from "../../hooks/useStream";
 
-interface ConversationModalContentProps {
-  onClose: () => void;
-}
+interface ConversationModalContentProps {}
 
-export default function ConversationModalContent({
-  onClose,
-}: Readonly<ConversationModalContentProps>) {
-  const { inputRef, handleCommentClick } = useStream();
-  return (
-    <div className="flex flex-col md:flex-row h-full w-full bg-transparent text-slate-100 overflow-hidden">
-      <PostFeed onClose={onClose} handleCommentClick={handleCommentClick} />
-      <Conversation
-        onClose={onClose}
-        inputRef={inputRef}
-        handleCommentClick={handleCommentClick}
-      />
-    </div>
-  );
-}
+const ConversationModalContent = memo(
+  ({}: Readonly<ConversationModalContentProps>) => {
+    const { inputRef, handleCommentClick } = useStream();
+    return (
+      <div className="flex flex-col md:flex-row h-full w-full bg-transparent text-slate-100 overflow-hidden">
+        <PostFeed handleCommentClick={handleCommentClick} />
+        <Conversation
+          inputRef={inputRef}
+          handleCommentClick={handleCommentClick}
+        />
+      </div>
+    );
+  },
+);
+
+export default ConversationModalContent;
