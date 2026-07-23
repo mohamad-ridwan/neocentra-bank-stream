@@ -237,7 +237,7 @@ export function useConversationReplies({
   // Dynamically attach scroll listener to the virtualized list element to sync scrollTop back to the parent scroll container.
   // This prevents scroll jumping issues when user manual-scrolls after programmatic auto-scrolling.
   useEffect(() => {
-    console.log("hooks rendered");
+    console.log("use conversation replies hooks render");
     if (listRef.current && listRef.current.element) {
       const listElement = listRef.current.element;
       if (!listElement._hasScrollListener) {
