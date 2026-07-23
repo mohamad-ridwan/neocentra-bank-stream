@@ -24,9 +24,30 @@ interface ReplyItemProps {
 const ReplyItem = React.memo(
   function ReplyItem({ reply, onCommentToggle }: Readonly<ReplyItemProps>) {
     const hasReplyLiked = !!reply.reaction.my_reaction;
+    const postHeaderData = useMemo(() => {
+      return {
+        user_id: reply?.user?.user_id,
+        fullname: reply?.user?.fullname,
+        avatar: reply?.user?.avatar,
+        username: reply?.user?.username,
+        role: reply?.user?.role,
+        isVerified: reply?.user?.isVerified,
+        created_display: reply?.created_display,
+        stream_id: reply.stream_id,
+      };
+    }, [
+      reply?.user?.user_id,
+      reply?.user?.fullname,
+      reply?.user?.avatar,
+      reply?.user?.username,
+      reply?.user?.role,
+      reply?.user?.isVerified,
+      reply?.created_display,
+      reply.stream_id,
+    ]);
     return (
       <div className="bg-slate-900/30 border border-slate-800/40 hover:border-slate-800/80 rounded-2xl p-4 transition-all duration-200">
-        <PostHeader post={reply} size="xs" hideMenu={true} />
+        <PostHeader post={postHeaderData} size="xs" hideMenu={true} />
         <PostContent
           content={reply.content_original}
           size="xs"

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
 import {
@@ -24,8 +24,6 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
   const activeParentReaction = useSelector(selectActiveParentReaction);
   const activeParent = useSelector(selectActiveParentStream);
   const auth = useSelector((state: any) => state.auth);
-
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const activeUser = auth?.user?.username || "Guest User";
   const activeUserFullname = auth?.user?.fullname || "Guest User";
@@ -131,27 +129,6 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
     ],
   );
 
-  const handleCopyLink = useCallback(
-    (streamId: number, customLink?: string) => {
-      if (typeof window !== "undefined" && navigator.clipboard) {
-        const demoLink =
-          customLink || `${window.location.origin}/stream/post/${streamId}`;
-        navigator.clipboard
-          .writeText(demoLink)
-          .then(() => {
-            toast.success("Link copied");
-          })
-          .catch((err) => {
-            console.error("Failed to copy link: ", err);
-            toast.error("Link copy failed");
-          });
-      } else {
-        toast.error("Link copy failed");
-      }
-    },
-    [],
-  );
-
   const handleCloseConversation = useCallback(() => {
     dispatch(closeConversation());
   }, [dispatch]);
@@ -169,12 +146,10 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
     activeUserFullname,
     activeUserAvatar,
     showComments: activeParentId ? { [activeParentId]: true } : {},
-    toastMessage,
     handleLike,
     handleShare,
     toggleComments,
     handleAddComment,
-    handleCopyLink,
     handleCloseConversation,
     hasLiked,
     handleCommentClick,

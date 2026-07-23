@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { StreamPost, ReactionDetails } from "@/types/stream.types";
 import { selectActiveParentStreamId } from "@/store/selectors/streamSelectors";
@@ -45,22 +45,47 @@ const PostCard = memo(
       post.reaction?.my_reaction as ReactionDetails,
     );
 
-    console.log("render post card");
-
     const activeParentId = useSelector(selectActiveParentStreamId);
     const showComments = useMemo(() => {
       return activeParentId === post.stream_id;
     }, [activeParentId, post?.stream_id]);
 
-    const handleLikeClick = onLike || (() => handleLike(post.stream_id));
-    const handleShareClick = onShare || (() => handleShare(post.stream_id));
-    const handleCommentToggleClick =
-      onCommentToggle || (() => toggleComments(post.stream_id));
+    const handleLikeClick = useCallback(() => {
+      handleLike(post.stream_id);
+    }, [post.stream_id]);
+    const handleShareClick = useCallback(() => {
+      handleShare(post.stream_id);
+    }, [post.stream_id]);
+    const handleCommentToggleClick = useCallback(() => {
+      toggleComments(post.stream_id);
+    }, [post.stream_id]);
+
+    const postHeaderData = useMemo(() => {
+      return {
+        user_id: post?.user?.user_id,
+        fullname: post?.user?.fullname,
+        avatar: post?.user?.avatar,
+        username: post?.user?.username,
+        role: post?.user?.role,
+        isVerified: post?.user?.isVerified,
+        created_display: post?.created_display,
+        stream_id: post.stream_id,
+      };
+    }, [
+      post?.user?.user_id,
+      post?.user?.fullname,
+      post?.user?.avatar,
+      post?.user?.username,
+      post?.user?.role,
+      post?.user?.isVerified,
+      post?.created_display,
+      post.stream_id,
+    ]);
 
     return (
       <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 shadow-xl relative overflow-hidden transition-all duration-300 hover:border-slate-700/80">
         <PostHeader
-          post={post}
+          post={postHeaderData}
           forceOpenTooltip={forceOpenTooltip}
           forceOpenMenu={forceOpenMenu}
           forceCopyLinkHover={forceCopyLinkHover}
