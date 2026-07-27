@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "sonner";
 import {
@@ -25,13 +25,19 @@ export function useStream(streamId?: number, myReaction?: ReactionDetails) {
   const activeParent = useSelector(selectActiveParentStream);
   const auth = useSelector((state: any) => state.auth);
 
-  const activeUser = auth?.user?.username || "Guest User";
-  const activeUserFullname = auth?.user?.fullname || "Guest User";
-  const activeUserAvatar = auth?.user?.avatar || "";
+  const activeUser = useMemo(() => {
+    return auth?.user?.username || "Guest User";
+  }, [auth?.user?.username]);
+  const activeUserFullname = useMemo(() => {
+    return auth?.user?.fullname || "Guest User";
+  }, [auth?.user?.fullname]);
+  const activeUserAvatar = useMemo(() => {
+    return auth?.user?.avatar || "";
+  }, [auth?.user?.avatar]);
 
-  const triggerToast = (msg: string) => {
+  const triggerToast = useCallback((msg: string) => {
     toast.success(msg);
-  };
+  }, []);
 
   const memoizedStreamId = React.useMemo(
     () => streamId ?? activeParentId,

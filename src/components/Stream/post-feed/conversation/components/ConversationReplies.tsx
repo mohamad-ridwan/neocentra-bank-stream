@@ -175,9 +175,7 @@ const ReplyRowContainer = React.memo(function ReplyRowContainer({
 }: Readonly<ReplyRowContainerProps>) {
   const replies = useSelector(selectActiveReplies);
 
-  const reply = useMemo(() => {
-    return replies[replies.length - 1 - index];
-  }, [replies, index]);
+  const reply = replies[replies.length - 1 - index];
 
   if (!reply) return null;
 
@@ -209,13 +207,10 @@ const Row = React.memo(function Row({
   onLoadMore,
   rowCount,
 }: Readonly<RowProps>) {
-  const rowStyle = React.useMemo(
-    () => ({
-      ...style,
-      transform: `${style.transform || ""} scaleY(-1)`,
-    }),
-    [style],
-  );
+  const rowStyle = {
+    ...style,
+    transform: `${style.transform || ""} scaleY(-1)`,
+  };
 
   if (hasParent) {
     if (index === rowCount - 1) {
@@ -406,7 +401,7 @@ export const ConversationReplies = React.memo(
                 overflow: "hidden",
                 overflowAnchor: "none",
               }}
-              overscanCount={5}
+              overscanCount={2}
             />
           </div>
         </div>

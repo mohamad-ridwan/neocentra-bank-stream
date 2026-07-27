@@ -30,7 +30,14 @@ const Row = React.memo(
     }
 
     return (
-      <div style={style} className="pb-3">
+      <div
+        style={{
+          ...style,
+          contentVisibility: "auto",
+          containIntrinsicSize: "0px 300px",
+        }}
+        className="pb-3"
+      >
         <PostCard post={post} />
       </div>
     );
@@ -72,10 +79,11 @@ export default function PostsFeed() {
           rowHeight={rowHeight}
           rowComponent={Row as any}
           onRowsRendered={onRowsRendered}
+          defaultHeight={245}
           rowProps={{ posts }}
           className="scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"
           style={{ height: "100%", width: "100%", overflow: "hidden" }}
-          overscanCount={5}
+          overscanCount={3}
         />
       </div>
     </div>

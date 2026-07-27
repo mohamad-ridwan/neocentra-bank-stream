@@ -39,9 +39,15 @@ export function useConversationReplies({
   const activeReplies = useSelector(selectActiveReplies);
   const pagination = useSelector(selectConversationPagination);
 
-  const parentStreamId = propsParentStreamId ?? activeParentId ?? 0;
-  const replies = propsReplies ?? activeReplies;
-  const isLastPage = propsIsLastPage ?? pagination?.is_last_page ?? false;
+  const parentStreamId = useMemo(() => {
+    return propsParentStreamId ?? activeParentId ?? 0;
+  }, [propsParentStreamId, activeParentId]);
+  const replies = useMemo(() => {
+    return propsReplies ?? activeReplies ?? [];
+  }, [propsReplies, activeReplies]);
+  const isLastPage = useMemo(() => {
+    return propsIsLastPage ?? pagination?.is_last_page ?? false;
+  }, [propsIsLastPage, pagination]);
   // const [hasAutoScrolled, setHasAutoScrolled] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
@@ -262,7 +268,7 @@ export function useConversationReplies({
         };
       }
     }
-  });
+  }, [isReplyAdded]);
 
   // Reset isReplyAdded and clean up the list scroll listener on unmount
   useEffect(() => {

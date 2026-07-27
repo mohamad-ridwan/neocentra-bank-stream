@@ -13,16 +13,16 @@ interface UsePostFeedProps {
 export function usePostFeed({ posts }: UsePostFeedProps) {
   const dispatch = useDispatch();
   const pagination = useSelector(selectStreamsPagination);
-  
+
   const [viewportHeight, setViewportHeight] = useState(800);
   const [totalHeight, setTotalHeight] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const wrapperRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<any>(null);
 
   const rowHeight = useDynamicRowHeight({
-    defaultRowHeight: 150,
+    defaultRowHeight: 245,
   });
 
   const isLastPage = pagination?.is_last_page ?? false;
@@ -35,10 +35,13 @@ export function usePostFeed({ posts }: UsePostFeedProps) {
       const newPosts = generateMockPosts(nextStartId, 20);
       dispatch(appendStreams(newPosts));
       setIsLoading(false);
-    }, 3000);
+    }, 100);
   };
 
-  const onRowsRendered = (visibleRows: { startIndex: number; stopIndex: number }) => {
+  const onRowsRendered = (visibleRows: {
+    startIndex: number;
+    stopIndex: number;
+  }) => {
     if (visibleRows.stopIndex >= posts.length - 1) {
       loadMore();
     }
