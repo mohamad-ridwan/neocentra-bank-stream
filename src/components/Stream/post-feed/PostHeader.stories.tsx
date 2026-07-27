@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
-import { toast } from 'sonner';
-import PostHeader from './PostHeader';
-import { StreamPost } from '@/types/stream.types';
-import MfeProviders from '../../MfeProviders';
+import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
+import { toast } from "sonner";
+import PostHeader from "./PostHeader";
+import { StreamPost } from "@/types/stream.types";
+import MfeProviders from "../../MfeProviders";
 
 const meta: Meta<typeof PostHeader> = {
-  title: 'Stream/PostHeader',
+  title: "Stream/PostHeader",
   component: PostHeader,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     (Story) => (
       <MfeProviders>
@@ -23,11 +23,14 @@ const meta: Meta<typeof PostHeader> = {
 };
 
 export default meta;
-type Story = StoryObj<React.ComponentProps<typeof PostHeader> & { showToast?: boolean }>;
+type Story = StoryObj<
+  React.ComponentProps<typeof PostHeader> & { showToast?: boolean }
+>;
 
 const mockVerifiedPost: StreamPost = {
   stream_id: 1,
-  content_original: "Menyambut masa depan perbankan digital dengan NeoCentra Bank. Keamanan dan kenyamanan Anda adalah prioritas kami.",
+  content_original:
+    "Menyambut masa depan perbankan digital dengan NeoCentra Bank. Keamanan dan kenyamanan Anda adalah prioritas kami.",
   created_at: new Date().toISOString(),
   created_display: "2 hours ago",
   total_likes: 24,
@@ -60,7 +63,7 @@ const mockUnverifiedPost: StreamPost = {
 
 export const VerifiedUser: Story = {
   args: {
-    post: mockVerifiedPost,
+    // post: mockVerifiedPost,
     forceOpenTooltip: true,
   },
   argTypes: {
@@ -73,11 +76,14 @@ export const VerifiedUser: Story = {
 
 export const UnverifiedUser: Story = {
   args: {
-    post: mockUnverifiedPost,
+    // post: mockUnverifiedPost,
   },
 };
 
-const CopyLinkDemoHelper = ({ showToast, ...props }: React.ComponentProps<typeof PostHeader> & { showToast?: boolean }) => {
+const CopyLinkDemoHelper = ({
+  showToast,
+  ...props
+}: React.ComponentProps<typeof PostHeader> & { showToast?: boolean }) => {
   React.useEffect(() => {
     let toastId: string | number | undefined;
     if (showToast) {
@@ -97,7 +103,7 @@ const CopyLinkDemoHelper = ({ showToast, ...props }: React.ComponentProps<typeof
 
 export const CopyLinkDemo: Story = {
   args: {
-    post: mockVerifiedPost,
+    // post: mockVerifiedPost,
     demoLink: "https://neocentra.bank/stream/post/1-demo-copy",
     showToast: true,
   },
@@ -112,7 +118,7 @@ export const CopyLinkDemo: Story = {
 
 export const PostMenuDemo: Story = {
   args: {
-    post: mockVerifiedPost,
+    // post: mockVerifiedPost,
     forceOpenMenu: true,
   },
   argTypes: {
@@ -122,5 +128,3 @@ export const PostMenuDemo: Story = {
     },
   },
 };
-
-

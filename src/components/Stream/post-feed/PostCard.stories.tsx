@@ -58,9 +58,9 @@ export const Default: Story = {
     onLike: () => console.log("Like clicked"),
     onShare: () => console.log("Share clicked"),
     onCommentToggle: () => console.log("Comment Toggle clicked"),
-    onAddComment: (text: string) => {
-      console.log("Add comment submitted:", text);
-    },
+    // onAddComment: (text: string) => {
+    //   console.log("Add comment submitted:", text);
+    // },
   },
 };
 
@@ -144,9 +144,9 @@ export const Expanded: StoryObj<
     onLike: () => console.log("Like clicked"),
     onShare: () => console.log("Share clicked"),
     onCommentToggle: () => console.log("Comment Toggle clicked"),
-    onAddComment: (text: string) => {
-      console.log("Add comment submitted:", text);
-    },
+    // onAddComment: (text: string) => {
+    //   console.log("Add comment submitted:", text);
+    // },
     hasAccountVerified: true,
     hoverVerifiedAccount: false,
     clickMenu: false,
@@ -185,6 +185,8 @@ export const Expanded: StoryObj<
   },
   render: function Render(args) {
     const [currentArgs, updateArgs] = useArgs();
-    return <ExpandedStoryWrapper {...(currentArgs as any)} updateArgs={updateArgs} />;
+    return (
+      <ExpandedStoryWrapper {...(currentArgs as any)} updateArgs={updateArgs} />
+    );
   },
 };
