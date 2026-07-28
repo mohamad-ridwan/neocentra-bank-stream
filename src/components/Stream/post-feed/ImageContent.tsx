@@ -3,9 +3,12 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Skeleton } from "shared_remote/Skeleton";
 
-const DynamicImageGallery = dynamic(() => import("shared_remote/imageGallery"), {
-  ssr: false,
-});
+const DynamicImageGallery = dynamic(
+  () => import("shared_remote/imageGallery"),
+  {
+    ssr: false,
+  },
+);
 
 export interface ImageContentProps {
   images: string[];

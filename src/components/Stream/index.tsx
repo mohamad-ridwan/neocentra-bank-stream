@@ -27,7 +27,7 @@ export default function Stream() {
         </div>
 
         {/* Sidebar / Trending & Stream Stats (Right Side) */}
-        <div className="hidden md:block md:w-80 lg:w-[350px] shrink-0 space-y-6">
+        <div className="hidden md:!block md:w-80 lg:w-[350px] shrink-0 space-y-6">
           <TrendingSidebar />
           <QuickStats />
         </div>
