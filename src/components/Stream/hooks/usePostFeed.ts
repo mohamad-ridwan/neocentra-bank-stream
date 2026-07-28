@@ -20,6 +20,12 @@ export function usePostFeed({ posts }: UsePostFeedProps) {
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<any>(null);
+  const totalHeightRef = useRef<number | null>(null);
+
+  // Keep totalHeightRef in sync with totalHeight state
+  useEffect(() => {
+    totalHeightRef.current = totalHeight;
+  }, [totalHeight]);
 
   const rowHeight = useDynamicRowHeight({
     defaultRowHeight: 245,
@@ -37,7 +43,7 @@ export function usePostFeed({ posts }: UsePostFeedProps) {
       const newPosts = generateMockPosts(nextStartId, 20);
       dispatch(appendStreams(newPosts));
       setIsLoading(false);
-    }, 100);
+    }, 500);
   }, [isLoading, isLastPage, posts.length]);
 
   const onRowsRendered = useCallback(
@@ -51,28 +57,45 @@ export function usePostFeed({ posts }: UsePostFeedProps) {
 
   // Dynamically set viewport height and listen to window scroll to sync scrollTop
   useEffect(() => {
+    let resizeRafId: number | null = null;
     const handleResize = () => {
-      setViewportHeight(window.innerHeight);
+      if (resizeRafId !== null) return;
+      resizeRafId = requestAnimationFrame(() => {
+        resizeRafId = null;
+        setViewportHeight(window.innerHeight);
+      });
     };
     handleResize();
     window.addEventListener("resize", handleResize);
 
+    let scrollRafId: number | null = null;
     const handleScroll = () => {
-      if (!wrapperRef.current || !listRef.current) return;
+      if (scrollRafId !== null) return;
+      scrollRafId = requestAnimationFrame(() => {
+        scrollRafId = null;
+        if (!wrapperRef.current || !listRef.current) return;
 
-      const listElement = listRef.current.element;
-      if (!listElement) return;
+        const listElement = listRef.current.element;
+        if (!listElement) return;
 
-      // Update total height if it changed
-      const currentScrollHeight = listElement.scrollHeight;
-      if (currentScrollHeight && currentScrollHeight !== totalHeight) {
-        setTotalHeight(currentScrollHeight);
-      }
+        // Batch all DOM reads first
+        const currentScrollHeight = listElement.scrollHeight;
+        const rect = wrapperRef.current.getBoundingClientRect();
+        const scrollTop = Math.max(0, -rect.top);
 
-      const rect = wrapperRef.current.getBoundingClientRect();
-      // Calculate how much the wrapper has scrolled past the top of the viewport
-      const scrollTop = Math.max(0, -rect.top);
-      listElement.scrollTop = scrollTop;
+        // Perform DOM writes & state updates after all reads
+        if (
+          currentScrollHeight &&
+          currentScrollHeight !== totalHeightRef.current
+        ) {
+          totalHeightRef.current = currentScrollHeight;
+          setTotalHeight(currentScrollHeight);
+        }
+
+        if (Math.abs(listElement.scrollTop - scrollTop) > 1) {
+          listElement.scrollTop = scrollTop;
+        }
+      });
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -81,23 +104,57 @@ export function usePostFeed({ posts }: UsePostFeedProps) {
     handleScroll();
 
     return () => {
+      if (resizeRafId !== null) cancelAnimationFrame(resizeRafId);
+      if (scrollRafId !== null) cancelAnimationFrame(scrollRafId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [totalHeight]);
+  }, []);
 
-  // Keep total height synced even when not scrolling (as react-window measures items asynchronously)
+  // Keep total height synced even when not scrolling using ResizeObserver instead of polling setInterval
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (listRef.current && listRef.current.element) {
-        const currentScrollHeight = listRef.current.element.scrollHeight;
-        if (currentScrollHeight && currentScrollHeight !== totalHeight) {
-          setTotalHeight(currentScrollHeight);
+    let rafId: number | null = null;
+
+    const checkScrollHeight = () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        if (listRef.current && listRef.current.element) {
+          const currentScrollHeight = listRef.current.element.scrollHeight;
+          if (
+            currentScrollHeight &&
+            currentScrollHeight !== totalHeightRef.current
+          ) {
+            totalHeightRef.current = currentScrollHeight;
+            setTotalHeight(currentScrollHeight);
+          }
         }
-      }
-    }, 200);
-    return () => clearInterval(interval);
-  }, [totalHeight, posts]);
+      });
+    };
+
+    // Check height immediately on mount or dependency change
+    checkScrollHeight();
+
+    const element = listRef.current?.element;
+    if (!element || typeof ResizeObserver === "undefined") {
+      return () => {
+        if (rafId !== null) cancelAnimationFrame(rafId);
+      };
+    }
+
+    const observer = new ResizeObserver(() => {
+      checkScrollHeight();
+    });
+
+    observer.observe(element);
+    if (element.firstElementChild) {
+      observer.observe(element.firstElementChild);
+    }
+
+    return () => {
+      observer.disconnect();
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [posts]);
 
   const wrapperHeight = useMemo((): string | number => {
     return totalHeight || "100vh";
