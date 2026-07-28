@@ -7,6 +7,12 @@ const initialPosts: StreamPost[] = [
       "Exciting news! NeoCentra Bank just rolled out the new BI-Fast upgrade. Transactions are now faster and have zero fees for transfers to all major local banks. Check it out on the payment tab!",
     created_at: "2026-07-15T14:45:00Z",
     created_display: "Today at 02:45 PM",
+    images: [
+      "https://images.unsplash.com/photo-1785155964371-1917d882efde?q=80&w=1064&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1777973320577-7ea820fc57a3?q=80&w=1064&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1785183619696-c1c56993bcbd?q=80&w=1064&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1781819063174-ffbbef09ecd5?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    ],
     reaction: {
       my_reaction: null,
       reactions: [{ reaction: "👍", total: 10 }],

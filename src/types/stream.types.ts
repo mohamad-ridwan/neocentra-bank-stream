@@ -31,6 +31,7 @@ export interface StreamPost {
   created_at: string;
   created_display: string;
   reaction: StreamReaction;
+  images?: string[];
   total_likes: number;
   total_replies: number;
   shares?: number; // Optional to support existing UI
@@ -55,6 +56,7 @@ export interface ReplyPost {
   created_at: string;
   created_display: string;
   reaction: StreamReaction;
+  images?: string[];
   total_likes: number;
   total_replies: number;
   user: StreamUser;
