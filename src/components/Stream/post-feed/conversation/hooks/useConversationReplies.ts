@@ -91,50 +91,49 @@ export function useConversationReplies({
     }, 0);
   }, [isLoading, isLastPage, replies.length, parentStreamId, dispatch]);
 
+  const handleScroll = useCallback(() => {
+    if (!scrollContainerRef.current || !wrapperRef.current || !listRef.current)
+      return;
+
+    const listElement = listRef.current.element;
+    if (!listElement) return;
+
+    const currentScrollHeight = listElement.scrollHeight;
+    if (currentScrollHeight && currentScrollHeight !== totalHeightRef.current) {
+      totalHeightRef.current = currentScrollHeight;
+      setTotalHeight(currentScrollHeight);
+    }
+
+    // Calculate how much the wrapper has scrolled past the top of the scroll container
+    const scrollTop = Math.max(
+      0,
+      scrollContainerRef.current.scrollTop - wrapperRef.current.offsetTop,
+    );
+
+    // Only set if they are different to prevent redundant scroll events and loops
+    if (Math.abs(listElement.scrollTop - scrollTop) > 1) {
+      listElement.scrollTop = scrollTop;
+    }
+  }, [scrollContainerRef, wrapperRef, listRef, totalHeightRef]);
+
   // Sync scroll height and list scrollTop on container scroll events.
   useEffect(() => {
+    let rafId: number | null = null;
     const handleResize = () => {
-      if (scrollContainerRef.current) {
-        setViewportHeight(scrollContainerRef.current.clientHeight);
-      } else {
-        setViewportHeight(window.innerHeight);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
       }
-      setIsMobile(window.innerWidth < 768);
+      rafId = window.requestAnimationFrame(() => {
+        if (scrollContainerRef.current) {
+          setViewportHeight(scrollContainerRef.current.clientHeight);
+        } else {
+          setViewportHeight(window.innerHeight);
+        }
+        setIsMobile(window.innerWidth < 768);
+      });
     };
     handleResize();
     window.addEventListener("resize", handleResize);
-
-    const handleScroll = () => {
-      if (
-        !scrollContainerRef.current ||
-        !wrapperRef.current ||
-        !listRef.current
-      )
-        return;
-
-      const listElement = listRef.current.element;
-      if (!listElement) return;
-
-      const currentScrollHeight = listElement.scrollHeight;
-      if (
-        currentScrollHeight &&
-        currentScrollHeight !== totalHeightRef.current
-      ) {
-        totalHeightRef.current = currentScrollHeight;
-        setTotalHeight(currentScrollHeight);
-      }
-
-      // Calculate how much the wrapper has scrolled past the top of the scroll container
-      const scrollTop = Math.max(
-        0,
-        scrollContainerRef.current.scrollTop - wrapperRef.current.offsetTop,
-      );
-
-      // Only set if they are different to prevent redundant scroll events and loops
-      if (Math.abs(listElement.scrollTop - scrollTop) > 1) {
-        listElement.scrollTop = scrollTop;
-      }
-    };
 
     const container = scrollContainerRef.current;
 
@@ -176,6 +175,9 @@ export function useConversationReplies({
     handleScroll();
 
     return () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
       window.removeEventListener("resize", handleResize);
       if (container) {
         container.removeEventListener("scroll", handleScroll);
@@ -243,7 +245,6 @@ export function useConversationReplies({
   // Dynamically attach scroll listener to the virtualized list element to sync scrollTop back to the parent scroll container.
   // This prevents scroll jumping issues when user manual-scrolls after programmatic auto-scrolling.
   useEffect(() => {
-    console.log("use conversation replies hooks render");
     if (listRef.current && listRef.current.element) {
       const listElement = listRef.current.element;
       if (!listElement._hasScrollListener) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDynamicRowHeight } from "react-window";
 import { StreamPost } from "@/types/stream.types";
@@ -25,9 +25,11 @@ export function usePostFeed({ posts }: UsePostFeedProps) {
     defaultRowHeight: 245,
   });
 
-  const isLastPage = pagination?.is_last_page ?? false;
+  const isLastPage = useMemo(() => {
+    return pagination?.is_last_page ?? false;
+  }, [pagination?.is_last_page]);
 
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     if (isLoading || isLastPage) return;
     setIsLoading(true);
     setTimeout(() => {
@@ -36,16 +38,16 @@ export function usePostFeed({ posts }: UsePostFeedProps) {
       dispatch(appendStreams(newPosts));
       setIsLoading(false);
     }, 100);
-  };
+  }, [isLoading, isLastPage, posts.length]);
 
-  const onRowsRendered = (visibleRows: {
-    startIndex: number;
-    stopIndex: number;
-  }) => {
-    if (visibleRows.stopIndex >= posts.length - 1) {
-      loadMore();
-    }
-  };
+  const onRowsRendered = useCallback(
+    (visibleRows: { startIndex: number; stopIndex: number }) => {
+      if (visibleRows.stopIndex >= posts.length - 1) {
+        loadMore();
+      }
+    },
+    [loadMore, posts.length],
+  );
 
   // Dynamically set viewport height and listen to window scroll to sync scrollTop
   useEffect(() => {
