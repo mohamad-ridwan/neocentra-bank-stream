@@ -5,6 +5,7 @@ import { selectActiveParentStreamId } from "@/store/selectors/streamSelectors";
 import { useStream } from "../hooks/useStream";
 import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
+import ImageContent from "./ImageContent";
 import PostActionBar from "./PostActionBar";
 import CommentsSection from "./CommentsSection";
 
@@ -92,6 +93,9 @@ const PostCard = memo(
           demoLink={demoLink}
         />
         <PostContent content={post.content_original} />
+        {post.images && post.images.length > 0 && (
+          <ImageContent images={post.images} streamId={post.stream_id} />
+        )}
         <PostActionBar
           post={post}
           hasLiked={hasLiked}
@@ -114,7 +118,8 @@ const PostCard = memo(
     return (
       prevProps.post?.stream_id === nextProps.post?.stream_id &&
       prevProps.post?.reaction?.my_reaction ===
-        nextProps.post?.reaction?.my_reaction
+        nextProps.post?.reaction?.my_reaction &&
+      prevProps.post?.images === nextProps.post?.images
     );
   },
 );

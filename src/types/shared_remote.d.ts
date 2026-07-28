@@ -106,3 +106,13 @@ declare module 'shared_remote/Toast' {
   export const Toaster: React.ComponentType<any>;
   export const toast: any;
 }
+
+declare module 'shared_remote/imageGallery' {
+  import React from 'react';
+  export interface ImageGalleryProps {
+    images: string[];
+    onClose?: () => void;
+  }
+  export const ImageGallery: React.ComponentType<ImageGalleryProps>;
+  export default ImageGallery;
+}

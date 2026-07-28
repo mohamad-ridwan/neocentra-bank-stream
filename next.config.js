@@ -12,6 +12,15 @@ const getRemoteUrl = (name, defaultLocalUrl) => {
 
 module.exports = {
   reactStrictMode: true,
+  images: {
+    domains: ["images.unsplash.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+  },
   experimental: {
     externalDir: true,
   },
@@ -34,6 +43,7 @@ module.exports = {
             "react-redux": { singleton: true },
             sonner: { singleton: true, requiredVersion: false },
             "@tanstack/react-query": { singleton: true },
+            lightgallery: { singleton: true, requiredVersion: false },
           },
         }),
       );
@@ -87,6 +97,10 @@ module.exports = {
         "shared_remote/Toast": path.resolve(
           __dirname,
           "../neocentra-bank-shared/src/components/ui/toast.tsx",
+        ),
+        "shared_remote/imageGallery": path.resolve(
+          __dirname,
+          "../neocentra-bank-shared/src/components/feature/imageGallery.tsx",
         ),
       };
     }
