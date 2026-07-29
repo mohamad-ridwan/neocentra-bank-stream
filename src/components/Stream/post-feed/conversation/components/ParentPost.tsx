@@ -56,13 +56,12 @@ export const ParentPost = React.memo(function ParentPost({
         className="pl-11"
       />
       {parent?.images && parent.images.length > 0 && (
-        <div className="w-full flex pl-11">
-          <ImageContent
-            images={parent.images}
-            streamId={parent.stream_id}
-            size="sm"
-          />
-        </div>
+        <ImageContent
+          images={parent.images}
+          streamId={parent.stream_id}
+          size="sm"
+          wrapperClassName="w-full flex pl-11"
+        />
       )}
       <div className="pl-11 mt-4">
         <PostActionBar

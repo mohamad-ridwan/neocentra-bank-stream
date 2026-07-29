@@ -55,7 +55,12 @@ const ReplyItem = React.memo(
           className="pl-8"
         />
         {reply?.images && reply.images.length > 0 && (
-          <ImageContent images={reply.images} streamId={reply.stream_id} />
+          <ImageContent
+            images={reply.images}
+            streamId={reply.stream_id}
+            size="sm"
+            wrapperClassName="w-full flex pl-11"
+          />
         )}
         <div className="pl-8 mt-2">
           <PostActionBar

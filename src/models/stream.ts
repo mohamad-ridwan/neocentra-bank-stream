@@ -159,6 +159,11 @@ export function generateMockReplies(
       content_original: content,
       created_at: new Date(Date.now() - (i + 1) * 3600000).toISOString(),
       created_display: `${i + 1} hours ago`,
+      images: [
+        "https://images.unsplash.com/photo-1785183619732-a12aa94785f8?q=80&w=1064&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1785153498473-88ec8f6fb87e?q=80&w=986&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1785148749603-25a853fee35b?q=80&w=954&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      ],
       reaction: {
         my_reaction: null,
         reactions: i % 3 === 0 ? [{ reaction: "👍", total: (i % 4) + 1 }] : [],

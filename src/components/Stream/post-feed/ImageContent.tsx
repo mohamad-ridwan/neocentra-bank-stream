@@ -21,6 +21,7 @@ export interface ImageContentProps {
   streamId: number;
   size?: "xs" | "sm" | "md" | "lg";
   className?: string;
+  wrapperClassName?: string;
 }
 
 const ImageContentComponent: React.FC<ImageContentProps> = ({
@@ -28,6 +29,7 @@ const ImageContentComponent: React.FC<ImageContentProps> = ({
   streamId,
   size = "md",
   className = "",
+  wrapperClassName = "",
 }) => {
   const [showGallery, setShowGallery] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -67,39 +69,43 @@ const ImageContentComponent: React.FC<ImageContentProps> = ({
     : "mt-3 relative w-full overflow-hidden rounded-xl bg-slate-800/50 border border-slate-700/60 shadow-md";
 
   return (
-    <div className={containerClasses}>
-      {!isLoaded && (
-        <Skeleton className="absolute inset-0 w-full h-full min-h-[280px] bg-slate-800 animate-pulse z-10" />
-      )}
-      <button
-        type="button"
-        onClick={handleImageClick}
-        className="w-full relative block overflow-hidden group focus:outline-none focus:ring-2 focus:ring-blue-500"
-        aria-label={`View images for stream ${streamId}`}
-      >
-        <div className="relative w-full aspect-video">
-          <Image
-            src={primaryImage}
-            alt={`Post content image for stream ${streamId}`}
-            width={600}
-            height={337}
-            loading="lazy"
-            onLoad={handleImageLoad}
-            className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.02] ${
-              isLoaded ? "opacity-100" : "opacity-0"
-            }`}
-          />
-        </div>
-        {hasMoreImages && (
-          <div className={`absolute ${sizeClasses} bg-slate-900/80 backdrop-blur-md rounded-lg border border-slate-700 font-semibold text-white shadow-lg pointer-events-none`}>
-            +{images.length - 1} photos
-          </div>
+    <div className={wrapperClassName}>
+      <div className={containerClasses}>
+        {!isLoaded && (
+          <Skeleton className="absolute inset-0 w-full h-full min-h-[280px] bg-slate-800 animate-pulse z-10" />
         )}
-      </button>
+        <button
+          type="button"
+          onClick={handleImageClick}
+          className="w-full relative block overflow-hidden group focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label={`View images for stream ${streamId}`}
+        >
+          <div className="relative w-full aspect-video">
+            <Image
+              src={primaryImage}
+              alt={`Post content image for stream ${streamId}`}
+              width={600}
+              height={337}
+              loading="lazy"
+              onLoad={handleImageLoad}
+              className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-[1.02] ${
+                isLoaded ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          </div>
+          {hasMoreImages && (
+            <div
+              className={`absolute ${sizeClasses} bg-slate-900/80 backdrop-blur-md rounded-lg border border-slate-700 font-semibold text-white shadow-lg pointer-events-none`}
+            >
+              +{images.length - 1} photos
+            </div>
+          )}
+        </button>
 
-      {showGallery && (
-        <DynamicImageGallery images={images} onClose={handleCloseGallery} />
-      )}
+        {showGallery && (
+          <DynamicImageGallery images={images} onClose={handleCloseGallery} />
+        )}
+      </div>
     </div>
   );
 };
