@@ -43,7 +43,7 @@ module.exports = {
             "react-redux": { singleton: true },
             sonner: { singleton: true, requiredVersion: false },
             "@tanstack/react-query": { singleton: true },
-            lightgallery: { singleton: true, requiredVersion: false },
+            // lightgallery: { singleton: true, requiredVersion: false },
           },
         }),
       );
