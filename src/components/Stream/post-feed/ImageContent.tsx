@@ -1,4 +1,10 @@
-import React, { memo, useState, useCallback } from "react";
+import React, {
+  memo,
+  useState,
+  useCallback,
+  useMemo,
+  startTransition,
+} from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Skeleton } from "shared_remote/Skeleton";
@@ -23,7 +29,7 @@ const ImageContentComponent: React.FC<ImageContentProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
 
   const handleImageClick = useCallback(() => {
-    setShowGallery(true);
+    startTransition(() => setShowGallery(true));
   }, []);
 
   const handleCloseGallery = useCallback(() => {
@@ -34,12 +40,16 @@ const ImageContentComponent: React.FC<ImageContentProps> = ({
     setIsLoaded(true);
   }, []);
 
+  const primaryImage = useMemo(() => {
+    return images?.[0];
+  }, [images]);
+  const hasMoreImages = useMemo(() => {
+    return images?.length > 1;
+  }, [images?.length]);
+
   if (!images || images.length === 0) {
     return null;
   }
-
-  const primaryImage = images[0];
-  const hasMoreImages = images.length > 1;
 
   return (
     <div className="mt-3 relative w-full overflow-hidden rounded-xl bg-slate-800/50 border border-slate-700/60 shadow-md">
