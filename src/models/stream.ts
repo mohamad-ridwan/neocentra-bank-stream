@@ -36,6 +36,9 @@ const initialPosts: StreamPost[] = [
       "Security Alert: NeoCentra Bank will never ask for your password, OTP, or PIN code via phone call, SMS, or chat apps. Keep your credentials secure, and activate 2FA in your account settings.",
     created_at: "2026-07-14T11:20:00Z",
     created_display: "Yesterday at 11:20 AM",
+    images: [
+      "https://images.unsplash.com/photo-1782352947577-123f7f392080?q=80&w=1035&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    ],
     reaction: {
       my_reaction: null,
       reactions: [{ reaction: "👍", total: 20 }],
@@ -59,6 +62,9 @@ const initialPosts: StreamPost[] = [
       "Does anyone know if the new cashier cashback program works for international transactions? The promo banner mentions retail spend, but I want to make sure before buying my plane tickets.",
     created_at: "2026-07-13T10:00:00Z",
     created_display: "2 days ago",
+    images: [
+      "https://images.unsplash.com/photo-1784558473662-6753ccc31f93?q=80&w=1036&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    ],
     reaction: {
       my_reaction: null,
       reactions: [],
@@ -95,6 +101,9 @@ export function generateMockPosts(
       }`,
       created_at: new Date(Date.now() - i * 3600000).toISOString(),
       created_display: `${i} hours ago`,
+      images: [
+        "https://images.unsplash.com/photo-1785126959459-2574804f676f?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      ],
       reaction: {
         my_reaction: null,
         reactions: i % 5 === 0 ? [{ reaction: "👍", total: i % 7 }] : [],
