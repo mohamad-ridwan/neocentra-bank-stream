@@ -48,7 +48,7 @@ const ReplyItem = React.memo(
     ]);
     return (
       <div className="bg-slate-900/30 border border-slate-800/40 hover:border-slate-800/80 rounded-2xl p-4 transition-all duration-200">
-        <PostHeader post={postHeaderData} size="xs" hideMenu={true} />
+        <PostHeader post={postHeaderData} size="xs" />
         <PostContent
           content={reply.content_original}
           size="xs"
