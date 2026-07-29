@@ -58,8 +58,8 @@ const ReplyItem = React.memo(
           <ImageContent
             images={reply.images}
             streamId={reply.stream_id}
-            size="sm"
-            wrapperClassName="w-full flex pl-11"
+            size="xs"
+            wrapperClassName="w-full flex pl-8"
           />
         )}
         <div className="pl-8 mt-2">
