@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { X } from "lucide-react";
 import PostHeader from "../PostHeader";
 import PostContent from "../PostContent";
+import ImageContent from "../ImageContent";
 import PostActionBar from "../PostActionBar";
 import { useStream } from "../../hooks/useStream";
 import { StreamUser } from "@/types/stream.types";
@@ -71,23 +72,40 @@ const PostFeed = React.memo(function PostFeed({
 
       {parent ? (
         <div
-          className="w-full max-w-2xl bg-slate-900/60 border border-slate-800/80 rounded-3xl p-8 shadow-2xl space-y-5 backdrop-blur-md cursor-default"
+          className="w-full max-w-2xl bg-slate-900/60 border border-slate-800/80 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-md cursor-default"
           onClick={stopPropagation}
         >
-          {/* Header */}
-          <PostHeader post={postHeaderData} size="lg" />
+          {/* Image Content - Desktop only */}
+          {parent.images && parent.images.length > 0 && (
+            <div className="hidden md:!block w-full">
+              <ImageContent
+                images={parent.images}
+                streamId={parent.stream_id}
+                className="w-full rounded-none border-none mt-0"
+              />
+            </div>
+          )}
 
-          {/* Content */}
-          <PostContent content={parent.content_original} size="lg" />
+          <div className="p-8 space-y-5">
+            {/* Header */}
+            <PostHeader post={postHeaderData} size="lg" />
 
-          {/* Action Bar */}
-          <PostActionBar
-            post={parent}
-            hasLiked={hasLiked}
-            onLike={handleLike as any}
-            onCommentToggle={handleCommentClick}
-            onShare={handleShare as any}
-          />
+            {/* Content */}
+            <PostContent
+              content={parent.content_original}
+              size="lg"
+              isScrollable
+            />
+
+            {/* Action Bar */}
+            <PostActionBar
+              post={parent}
+              hasLiked={hasLiked}
+              onLike={handleLike as any}
+              onCommentToggle={handleCommentClick}
+              onShare={handleShare as any}
+            />
+          </div>
         </div>
       ) : (
         <div className="text-slate-500 text-sm animate-pulse">

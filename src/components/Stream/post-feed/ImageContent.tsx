@@ -19,11 +19,13 @@ const DynamicImageGallery = dynamic(
 export interface ImageContentProps {
   images: string[];
   streamId: number;
+  className?: string;
 }
 
 const ImageContentComponent: React.FC<ImageContentProps> = ({
   images,
   streamId,
+  className = "",
 }) => {
   const [showGallery, setShowGallery] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -51,15 +53,19 @@ const ImageContentComponent: React.FC<ImageContentProps> = ({
     return null;
   }
 
+  const containerClasses = className
+    ? `relative w-full overflow-hidden ${className}`
+    : "mt-3 relative w-full overflow-hidden rounded-xl bg-slate-800/50 border border-slate-700/60 shadow-md";
+
   return (
-    <div className="mt-3 relative w-full overflow-hidden rounded-xl bg-slate-800/50 border border-slate-700/60 shadow-md">
+    <div className={containerClasses}>
       {!isLoaded && (
-        <Skeleton className="absolute inset-0 w-full h-full min-h-[280px] rounded-xl bg-slate-800 animate-pulse z-10" />
+        <Skeleton className="absolute inset-0 w-full h-full min-h-[280px] bg-slate-800 animate-pulse z-10" />
       )}
       <button
         type="button"
         onClick={handleImageClick}
-        className="w-full relative block overflow-hidden group focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-xl"
+        className="w-full relative block overflow-hidden group focus:outline-none focus:ring-2 focus:ring-blue-500"
         aria-label={`View images for stream ${streamId}`}
       >
         <div className="relative w-full aspect-video">

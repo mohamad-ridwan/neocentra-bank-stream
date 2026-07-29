@@ -4,10 +4,18 @@ interface PostContentProps {
   content: string;
   size?: "xs" | "sm" | "md" | "lg";
   className?: string;
+  isScrollable?: boolean;
+  scrollAuto?: boolean;
 }
 
 const PostContent = memo(
-  ({ content, size = "md", className = "" }: Readonly<PostContentProps>) => {
+  ({
+    content,
+    size = "md",
+    className = "",
+    isScrollable = false,
+    scrollAuto = false,
+  }: Readonly<PostContentProps>) => {
     const sizeClasses = {
       xs: "text-slate-300 text-xs leading-relaxed",
       sm: "text-slate-300 text-xs leading-relaxed",
@@ -15,7 +23,14 @@ const PostContent = memo(
       lg: "text-slate-200 text-base leading-relaxed",
     }[size];
 
-    return <div className={`${sizeClasses} ${className}`}>{content}</div>;
+    const canScroll = isScrollable || scrollAuto;
+    const scrollClasses = canScroll ? "max-h-[100px] overflow-y-auto" : "";
+
+    return (
+      <div className={`${sizeClasses} ${scrollClasses} ${className}`}>
+        {content}
+      </div>
+    );
   },
 );
 
