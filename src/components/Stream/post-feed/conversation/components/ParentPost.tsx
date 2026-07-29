@@ -4,6 +4,7 @@ import PostHeader from "../../PostHeader";
 import PostContent from "../../PostContent";
 import PostActionBar from "../../PostActionBar";
 import { useStream } from "../../../hooks/useStream";
+import ImageContent from "../../ImageContent";
 
 interface ParentPostProps {
   parent: StreamPost | null;
@@ -54,6 +55,15 @@ export const ParentPost = React.memo(function ParentPost({
         size="sm"
         className="pl-11"
       />
+      {parent?.images && parent.images.length > 0 && (
+        <div className="w-full flex pl-11">
+          <ImageContent
+            images={parent.images}
+            streamId={parent.stream_id}
+            size="sm"
+          />
+        </div>
+      )}
       <div className="pl-11 mt-4">
         <PostActionBar
           post={parent}

@@ -15,6 +15,7 @@ import PostActionBar from "../../PostActionBar";
 import { useConversationReplies } from "../hooks/useConversationReplies";
 import { ParentPost } from "./ParentPost";
 import { ConversationLoading } from "./ConversationLoading";
+import ImageContent from "../../ImageContent";
 
 interface ReplyItemProps {
   reply: ReplyPost;
@@ -53,6 +54,9 @@ const ReplyItem = React.memo(
           size="xs"
           className="pl-8"
         />
+        {reply?.images && reply.images.length > 0 && (
+          <ImageContent images={reply.images} streamId={reply.stream_id} />
+        )}
         <div className="pl-8 mt-2">
           <PostActionBar
             post={reply}

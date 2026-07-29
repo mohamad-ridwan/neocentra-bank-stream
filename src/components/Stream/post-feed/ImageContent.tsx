@@ -19,16 +19,25 @@ const DynamicImageGallery = dynamic(
 export interface ImageContentProps {
   images: string[];
   streamId: number;
+  size?: "xs" | "sm" | "md" | "lg";
   className?: string;
 }
 
 const ImageContentComponent: React.FC<ImageContentProps> = ({
   images,
   streamId,
+  size = "md",
   className = "",
 }) => {
   const [showGallery, setShowGallery] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const sizeClasses = {
+    xs: "bottom-2 right-2 px-2 py-0.5 text-[10px]",
+    sm: "bottom-2 right-2 px-2.5 py-1 text-xs",
+    md: "bottom-3 right-3 px-3 py-1.5 text-xs",
+    lg: "bottom-4 right-4 px-3.5 py-2 text-sm",
+  }[size];
 
   const handleImageClick = useCallback(() => {
     startTransition(() => setShowGallery(true));
@@ -82,7 +91,7 @@ const ImageContentComponent: React.FC<ImageContentProps> = ({
           />
         </div>
         {hasMoreImages && (
-          <div className="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-semibold text-white shadow-lg pointer-events-none">
+          <div className={`absolute ${sizeClasses} bg-slate-900/80 backdrop-blur-md rounded-lg border border-slate-700 font-semibold text-white shadow-lg pointer-events-none`}>
             +{images.length - 1} photos
           </div>
         )}
