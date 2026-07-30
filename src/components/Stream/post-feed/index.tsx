@@ -54,6 +54,7 @@ export default function PostsFeed() {
     rowHeight,
     wrapperHeight,
     onRowsRendered,
+    onResize,
     isLoading,
   } = usePostFeed({ posts });
 
@@ -77,6 +78,7 @@ export default function PostsFeed() {
           rowHeight={rowHeight}
           rowComponent={Row as any}
           onRowsRendered={onRowsRendered}
+          onResize={onResize}
           defaultHeight={245}
           rowProps={{ posts }}
           className="scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent"

@@ -27,9 +27,93 @@ export function usePostFeed({ posts }: UsePostFeedProps) {
     totalHeightRef.current = totalHeight;
   }, [totalHeight]);
 
-  const rowHeight = useDynamicRowHeight({
+  const visibleStartIndexRef = useRef(0);
+  const cachedHeightsRef = useRef<Map<number, number>>(new Map());
+  const prevContainerWidthRef = useRef<number | null>(null);
+
+  const rowHeightCore = useDynamicRowHeight({
     defaultRowHeight: 245,
   });
+
+  const rowHeight = useMemo(() => {
+    return {
+      getAverageRowHeight: () => rowHeightCore.getAverageRowHeight(),
+      getRowHeight: (index: number) => {
+        const height = rowHeightCore.getRowHeight(index);
+        if (height !== undefined) {
+          const oldHeight = cachedHeightsRef.current.get(index);
+          if (oldHeight !== undefined && oldHeight !== height) {
+            const delta = height - oldHeight;
+            if (index < visibleStartIndexRef.current) {
+              window.scrollBy(0, delta);
+            }
+          }
+          cachedHeightsRef.current.set(index, height);
+        }
+        return height;
+      },
+      setRowHeight: (index: number, size: number) => {
+        const oldHeight = cachedHeightsRef.current.get(index);
+        if (oldHeight !== undefined && oldHeight !== size) {
+          const delta = size - oldHeight;
+          if (index < visibleStartIndexRef.current) {
+            window.scrollBy(0, delta);
+          }
+        }
+        cachedHeightsRef.current.set(index, size);
+        rowHeightCore.setRowHeight(index, size);
+      },
+      observeRowElements: rowHeightCore.observeRowElements,
+    };
+  }, [rowHeightCore]);
+
+  const onResize = useCallback(
+    ({ width }: { width: number; height: number }) => {
+      const roundedWidth = Math.round(width);
+      const prevWidth = prevContainerWidthRef.current;
+      prevContainerWidthRef.current = roundedWidth;
+
+      if (prevWidth && prevWidth !== roundedWidth) {
+        const widthRatio = roundedWidth / prevWidth;
+        const scaleFactor = Math.max(0.2, Math.min(5, 1 / widthRatio));
+
+        cachedHeightsRef.current.forEach((oldH, index) => {
+          if (index < visibleStartIndexRef.current) {
+            const newH = Math.round(oldH * scaleFactor);
+            cachedHeightsRef.current.set(index, newH);
+            rowHeightCore.setRowHeight(index, newH);
+          }
+        });
+
+        const currentScrollY = window.scrollY;
+        if (currentScrollY > 0) {
+          const newScrollY = Math.round(currentScrollY * scaleFactor);
+          window.scrollTo(0, newScrollY);
+        }
+      }
+
+      if (listRef.current && listRef.current.element) {
+        const listElement = listRef.current.element;
+        const currentScrollHeight = listElement.scrollHeight;
+        if (
+          currentScrollHeight &&
+          currentScrollHeight !== totalHeightRef.current
+        ) {
+          totalHeightRef.current = currentScrollHeight;
+          setTotalHeight(currentScrollHeight);
+        }
+
+        if (wrapperRef.current) {
+          const rect = wrapperRef.current.getBoundingClientRect();
+          const scrollTop = Math.max(0, -rect.top);
+          if (Math.abs(listElement.scrollTop - scrollTop) > 1) {
+            listElement.scrollTop = scrollTop;
+          }
+        }
+      }
+    },
+    [rowHeightCore],
+  );
 
   const isLastPage = useMemo(() => {
     return pagination?.is_last_page ?? false;
@@ -48,6 +132,7 @@ export function usePostFeed({ posts }: UsePostFeedProps) {
 
   const onRowsRendered = useCallback(
     (visibleRows: { startIndex: number; stopIndex: number }) => {
+      visibleStartIndexRef.current = visibleRows.startIndex;
       if (visibleRows.stopIndex >= posts.length - 1) {
         loadMore();
       }
@@ -167,6 +252,7 @@ export function usePostFeed({ posts }: UsePostFeedProps) {
     rowHeight,
     wrapperHeight,
     onRowsRendered,
+    onResize,
     isLoading,
   };
 }
