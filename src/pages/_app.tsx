@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import { useRemoteCSS } from "@/hooks/useRemoteCSS";
 import { useStore } from "react-redux";
 import { streamSlice } from "@/store/slices/streamSlice";
-import Head from "next/head";
 
 const MfeProviders = dynamic(() => import("@/components/MfeProviders"), {
   ssr: false,
@@ -37,16 +36,6 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <MfeProviders>
       <StreamStoreInjector>
-        <Head>
-          {/* Preconnect ke domain CDN untuk mempercepat DNS lookup & TLS handshake */}
-          <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-          <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
-          {/* Lightgallery CSS */}
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lightgallery-bundle.min.css"
-          />
-        </Head>
         {showContent ? (
           <Component {...pageProps} />
         ) : (
