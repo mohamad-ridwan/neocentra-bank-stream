@@ -33,8 +33,6 @@ const Row = React.memo(
       <div
         style={{
           ...style,
-          contentVisibility: "auto",
-          containIntrinsicSize: "0px 300px",
         }}
         className="pb-3"
       >
