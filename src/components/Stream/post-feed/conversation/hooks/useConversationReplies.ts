@@ -54,16 +54,121 @@ export function useConversationReplies({
   const [viewportHeight, setViewportHeight] = useState(800);
   const [totalHeight, setTotalHeight] = useState<number | null>(null);
   const totalHeightRef = useRef<number | null>(null);
-
   const [isLoading, setIsLoading] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<any>(null);
 
-  const rowHeight = useDynamicRowHeight({
+  const visibleStartIndexRef = useRef(0);
+  const cachedHeightsRef = useRef<Map<number, number>>(new Map());
+  const prevContainerWidthRef = useRef<number | null>(null);
+
+  const rowHeightCore = useDynamicRowHeight({
     defaultRowHeight: 100,
     key: parentStreamId,
   });
+
+  const rowHeight = useMemo(() => {
+    return {
+      getAverageRowHeight: () => rowHeightCore.getAverageRowHeight(),
+      getRowHeight: (index: number) => {
+        const height = rowHeightCore.getRowHeight(index);
+        if (height !== undefined) {
+          const oldHeight = cachedHeightsRef.current.get(index);
+          if (oldHeight !== undefined && oldHeight !== height) {
+            const delta = height - oldHeight;
+            if (index < visibleStartIndexRef.current) {
+              if (scrollContainerRef.current) {
+                scrollContainerRef.current.scrollTop += delta;
+              }
+            }
+          }
+          cachedHeightsRef.current.set(index, height);
+        }
+        return height;
+      },
+      setRowHeight: (index: number, size: number) => {
+        const oldHeight = cachedHeightsRef.current.get(index);
+        if (oldHeight !== undefined && oldHeight !== size) {
+          const delta = size - oldHeight;
+          if (index < visibleStartIndexRef.current) {
+            if (scrollContainerRef.current) {
+              scrollContainerRef.current.scrollTop += delta;
+            }
+          }
+        }
+        cachedHeightsRef.current.set(index, size);
+        rowHeightCore.setRowHeight(index, size);
+      },
+      observeRowElements: rowHeightCore.observeRowElements,
+    };
+  }, [rowHeightCore, scrollContainerRef]);
+
+  const onResize = useCallback(
+    ({ width }: { width: number; height: number }) => {
+      const roundedWidth = Math.round(width);
+      const prevWidth = prevContainerWidthRef.current;
+      prevContainerWidthRef.current = roundedWidth;
+
+      if (prevWidth && prevWidth !== roundedWidth) {
+        const widthRatio = roundedWidth / prevWidth;
+        const scaleFactor = Math.max(0.2, Math.min(5, 1 / widthRatio));
+
+        cachedHeightsRef.current.forEach((oldH, index) => {
+          if (index < visibleStartIndexRef.current) {
+            const newH = Math.round(oldH * scaleFactor);
+            cachedHeightsRef.current.set(index, newH);
+            rowHeightCore.setRowHeight(index, newH);
+          }
+        });
+
+        if (
+          scrollContainerRef.current &&
+          scrollContainerRef.current.scrollTop > 0
+        ) {
+          const newScrollTop = Math.round(
+            scrollContainerRef.current.scrollTop * scaleFactor,
+          );
+          scrollContainerRef.current.scrollTop = newScrollTop;
+
+          // Synchronize listElement.scrollTop immediately to prevent handleListScroll from snapping back
+          if (
+            listRef.current &&
+            listRef.current.element &&
+            wrapperRef.current
+          ) {
+            const listElement = listRef.current.element;
+            const wrapperOffsetTop = wrapperRef.current.offsetTop;
+            const newListScrollTop = Math.max(
+              0,
+              newScrollTop - wrapperOffsetTop,
+            );
+            listElement.scrollTop = newListScrollTop;
+          }
+        }
+      }
+
+      if (listRef.current && listRef.current.element) {
+        const listElement = listRef.current.element;
+        const currentScrollHeight = listElement.scrollHeight;
+        if (
+          currentScrollHeight &&
+          currentScrollHeight !== totalHeightRef.current
+        ) {
+          totalHeightRef.current = currentScrollHeight;
+          setTotalHeight(currentScrollHeight);
+        }
+      }
+    },
+    [rowHeightCore, scrollContainerRef, wrapperRef, listRef],
+  );
+
+  const onRowsRendered = useCallback(
+    (visibleRows: { startIndex: number; stopIndex: number }) => {
+      visibleStartIndexRef.current = visibleRows.startIndex;
+    },
+    [],
+  );
 
   // Keep totalHeightRef in sync with totalHeight state
   useEffect(() => {
@@ -286,7 +391,6 @@ export function useConversationReplies({
     };
   }, [replies, isLoading]);
 
-
   const wrapperHeight = useMemo((): string | number => {
     return totalHeight || "100vh";
   }, [totalHeight]);
@@ -493,6 +597,8 @@ export function useConversationReplies({
     wrapperHeight,
     isLoading,
     loadMore,
+    onResize,
+    onRowsRendered,
     isReady,
   };
 }

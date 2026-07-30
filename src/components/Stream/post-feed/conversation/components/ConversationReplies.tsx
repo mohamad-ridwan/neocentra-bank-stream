@@ -340,6 +340,8 @@ export const ConversationReplies = React.memo(
       wrapperHeight,
       isLoading,
       loadMore,
+      onResize,
+      onRowsRendered,
       isReady,
     } = useConversationReplies({
       replies: activeReplies,
@@ -395,6 +397,8 @@ export const ConversationReplies = React.memo(
               rowCount={rowCount}
               rowHeight={rowHeight}
               rowComponent={Row as any}
+              onResize={onResize}
+              onRowsRendered={onRowsRendered}
               rowProps={{
                 hasParent,
                 isLoading,
